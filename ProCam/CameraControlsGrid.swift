@@ -9,10 +9,27 @@ import SwiftUI
 
 struct CameraControlsGrid: View {
     var body: some View {
-        LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5)) {
-            histogramButton
+        VStack(spacing: 4) {
+            RoundedRectangle(cornerRadius: 4)
+                .frame(width: 32, height: 6)
+                .foregroundColor(.gray)
+                .offset(y: 88)
+            
+            LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5)) {
+                histogramButton
+                flashlightButton
+                Spacer()
+                gridOverlayButton
+                Spacer()
+                switchFrontRearCameraButton
+                heicRawButton
+                timerButton
+                whiteBalanceButton
+                settingsButton
+            }
+            .padding()
+            .offset(y: 77)
         }
-        .padding()
     }
     
     var histogramButton: some View {
@@ -20,11 +37,116 @@ struct CameraControlsGrid: View {
             #warning("Toggle histogram visibility")
         } label: {
             Image(systemName: "waveform")
-                .font(.system(size: 40, weight: .light, design: .monospaced))
-                .frame(height: 24, alignment: .top)
+                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 20, alignment: .top)
                 .clipped()
                 .foregroundColor(.white)
         }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var flashlightButton: some View {
+        Button {
+            #warning("Toggle flashlight")
+        } label: {
+            Image(systemName: "bolt.slash.fill")
+                .scaledToFit()
+                .font(.system(size: 32, weight: .ultraLight, design: .monospaced))
+                .aspectRatio(1, contentMode: .fit)
+                .foregroundColor(.white)
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var gridOverlayButton: some View {
+        Button {
+            #warning("Toggle grid visibility")
+        } label: {
+            Image(systemName: "grid")
+                .font(.system(size: 32, weight: .ultraLight, design: .monospaced))
+                .foregroundColor(.white.opacity(0.4))
+                .background {
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(lineWidth: 2)
+                        .foregroundColor(.white)
+                }
+                
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var switchFrontRearCameraButton: some View {
+        Button {
+            #warning("Switch between front and rear cameras")
+        } label: {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .foregroundColor(.white)
+                .rotationEffect(Angle(degrees: 50))
+                
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var heicRawButton: some View {
+        Button {
+            #warning("Switch between HEIC and RAW formats")
+        } label: {
+            Text("HEIC")
+                .font(.caption)
+                .foregroundColor(.white)
+                .padding(5)
+                .background {
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(lineWidth: 2)
+                        .foregroundColor(.white)
+                }
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var timerButton: some View {
+        Button {
+            #warning("Switch between front and rear cameras")
+        } label: {
+            Image(systemName: "timer")
+                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .foregroundColor(.white)
+                
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var whiteBalanceButton: some View {
+        Button {
+            #warning("Switch between white balance mode")
+        } label: {
+            Text("AWB")
+                .foregroundColor(.white)
+                
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
+    }
+    
+    var settingsButton: some View {
+        Button {
+            #warning("Switch between front and rear cameras")
+        } label: {
+            Image(systemName: "gear")
+                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .foregroundColor(.white)
+                
+        }
+        .padding()
+        .frame(height: 56, alignment: .center)
     }
 }
 
