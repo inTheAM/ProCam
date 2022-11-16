@@ -60,7 +60,7 @@ struct ContentView: View {
                 .padding(.top)
             }
             .background {
-                Color.white.opacity(0.075)
+                Color.white.opacity(0.05)
             }
         }
         .ignoresSafeArea()
