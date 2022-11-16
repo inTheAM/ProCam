@@ -149,7 +149,7 @@ struct ContentView: View {
                 }
             
                 .padding(4)
-                .frame(width: 96, height: 96)
+                .frame(width: 80, height: 80)
                 .background {
                     Circle().stroke(lineWidth: 3)
                         .foregroundColor(.white)
