@@ -13,6 +13,7 @@ struct ProCamApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
+                .statusBarHidden()
         }
     }
 }
