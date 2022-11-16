@@ -11,6 +11,17 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             cameraPreview
+            
+            Divider()
+            HStack {
+                autoManualFocusButton
+                
+                Spacer(minLength: 0)
+                
+                portraitModeButton
+            }
+            .padding(.horizontal)
+
         }
         .ignoresSafeArea()
     }
@@ -35,6 +46,23 @@ struct ContentView: View {
                 .foregroundColor(.yellow)
                 .background {
                     CircleBackground(color: .yellow)
+                }
+        }
+        .padding()
+    }
+    
+    var portraitModeButton: some View {
+        Button {
+            #warning("(De)Activate Portrait Mode")
+        } label: {
+            Image("PortraitMode")
+                .renderingMode(.template)
+                .resizedToFit()
+                .frame(width: 24, height: 24)
+                .padding(10)
+                .foregroundColor(.gray)
+                .background {
+                    CircleBackground(color: .gray)
                 }
         }
         .padding()
