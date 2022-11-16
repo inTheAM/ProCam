@@ -68,6 +68,15 @@ struct ContentView: View {
         .padding()
     }
     
+    #warning("Show last image in library")
+    var lastImageInLibrary: some View {
+        Rectangle()
+            .aspectRatio(contentMode: .fit)
+            .cornerRadius(8)
+            .frame(width: 96, height: 96)
+            .padding(.horizontal, 8)
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
