@@ -26,6 +26,20 @@ struct ContentView: View {
             }
     }
     
+    var autoManualFocusButton: some View {
+        Button {
+            #warning("Toggle Auto/Manual Focus")
+        } label: {
+            Text("AF")
+                .padding(10)
+                .foregroundColor(.yellow)
+                .background {
+                    CircleBackground(color: .yellow)
+                }
+        }
+        .padding()
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
