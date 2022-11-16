@@ -10,6 +10,16 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
+            
+            HStack {
+                histogram
+                
+                Spacer()
+                
+                autoManualModeButton
+            }
+            .padding()
+            
             cameraPreview
             
             Divider()
@@ -38,6 +48,25 @@ struct ContentView: View {
 
         }
         .ignoresSafeArea()
+    }
+    
+    #warning("Show histogram")
+    var histogram: some View {
+        Text("Histogram")
+            .font(.caption)
+    }
+    
+    var autoManualModeButton: some View {
+        Button {
+            #warning("Toggle Auto/Manual mode")
+        } label: {
+            Image("AFTriangle")
+                .renderingMode(.template)
+                .resizedToFit()
+                .frame(width: 16, height: 16)
+                .tint(.gray)
+        }
+        .padding(.trailing)
     }
     
     #warning("Show camera preview")
