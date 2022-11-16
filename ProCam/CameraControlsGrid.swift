@@ -11,7 +11,7 @@ struct CameraControlsGrid: View {
     var body: some View {
         VStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 4)
-                .frame(width: 32, height: 6)
+                .frame(width: 40, height: 6)
                 .foregroundColor(.gray)
                 .offset(y: 88)
             
