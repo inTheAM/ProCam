@@ -21,19 +21,17 @@ struct ContentView: View {
             .padding()
             
             ZStack(alignment: .bottom) {
-                cameraPreview
-                    .overlay {
-                        balanceIndicator
-                    }
-                ZStack(alignment: .bottom) {
-                    VStack {
-                        Spacer(minLength: 80)
-                        Rectangle()
-                            .foregroundColor(.black)
-                            .frame(height: 80)
-                    }
-                    CameraControlsGrid()
+                VStack {
+                    cameraPreview
+                        .overlay {
+                            balanceIndicator
+                        }
+                    Rectangle()
+                        .foregroundColor(.black)
+                        .frame(height: 80)
                 }
+                CameraControlsGrid()
+                
             }
             
             Group {
