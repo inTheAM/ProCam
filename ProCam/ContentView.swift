@@ -20,35 +20,48 @@ struct ContentView: View {
             }
             .padding()
             
-            cameraPreview
-                .overlay {
-                    balanceIndicator
+            ZStack(alignment: .bottom) {
+                cameraPreview
+                    .overlay {
+                        balanceIndicator
+                    }
+                
+                Rectangle()
+                    .foregroundColor(.black)
+                    .frame(height: 80)
+            }
+            
+            Group {
+                Divider()
+                Divider()
+            }
+            
+            Group {
+                HStack {
+                    autoManualFocusButton
+                    
+                    Spacer(minLength: 0)
+                    
+                    portraitModeButton
                 }
-            
-            Divider()
-            
-            HStack {
-                autoManualFocusButton
+                .padding(.horizontal)
                 
-                Spacer(minLength: 0)
-                
-                portraitModeButton
+                HStack(alignment: .bottom) {
+                    lastImageInLibrary
+                    
+                    Spacer()
+                    
+                    capturePhotoButton
+                    
+                    Spacer()
+                    
+                    switchBetweenRearCamerasButton
+                }
+                .padding(.top)
             }
-            .padding(.horizontal)
-            
-            HStack(alignment: .bottom) {
-                lastImageInLibrary
-                
-                Spacer()
-                
-                capturePhotoButton
-                
-                Spacer()
-                
-                switchBetweenRearCamerasButton
+            .background {
+                Color.white.opacity(0.075)
             }
-            .padding(.top)
-
         }
         .ignoresSafeArea()
     }
