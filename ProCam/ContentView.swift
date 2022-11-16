@@ -21,6 +21,9 @@ struct ContentView: View {
             .padding()
             
             cameraPreview
+                .overlay {
+                    balanceIndicator
+                }
             
             Divider()
             
@@ -73,11 +76,13 @@ struct ContentView: View {
     var cameraPreview: some View {
         Rectangle()
             .foregroundColor(.cyan.opacity(0.2))
-            .overlay {
-                Circle().stroke()
-                    .foregroundColor(.gray)
-                    .frame(width: 32, height: 32)
-            }
+    }
+    
+    var balanceIndicator: some View {
+        Circle()
+            .stroke()
+            .foregroundColor(.gray)
+            .frame(width: 32, height: 32)
     }
     
     var autoManualFocusButton: some View {
