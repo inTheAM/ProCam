@@ -13,6 +13,7 @@ struct ContentView: View {
             cameraPreview
             
             Divider()
+            
             HStack {
                 autoManualFocusButton
                 
@@ -28,7 +29,12 @@ struct ContentView: View {
                 Spacer()
                 
                 capturePhotoButton
+                
+                Spacer()
+                
+                switchBetweenRearCamerasButton
             }
+            .padding(.top)
 
         }
         .ignoresSafeArea()
@@ -101,6 +107,21 @@ struct ContentView: View {
                     Circle().stroke(lineWidth: 3)
                         .foregroundColor(.white)
                 }
+        }
+        .padding([.horizontal, .bottom], 32)
+    }
+    
+    var switchBetweenRearCamerasButton: some View {
+        Button {
+            #warning("Switch between rear cameras")
+        } label: {
+            Text("1x")
+                .padding(10)
+                .background {
+                    Circle().stroke(lineWidth: 2)
+                }
+                .foregroundColor(.white)
+            
         }
         .padding([.horizontal, .bottom], 32)
     }
