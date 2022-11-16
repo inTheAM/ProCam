@@ -25,10 +25,15 @@ struct ContentView: View {
                     .overlay {
                         balanceIndicator
                     }
-                
-                Rectangle()
-                    .foregroundColor(.black)
-                    .frame(height: 80)
+                ZStack(alignment: .bottom) {
+                    VStack {
+                        Spacer(minLength: 80)
+                        Rectangle()
+                            .foregroundColor(.black)
+                            .frame(height: 80)
+                    }
+                    CameraControlsGrid()
+                }
             }
             
             Group {
