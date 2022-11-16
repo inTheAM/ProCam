@@ -21,6 +21,14 @@ struct ContentView: View {
                 portraitModeButton
             }
             .padding(.horizontal)
+            
+            HStack(alignment: .bottom) {
+                lastImageInLibrary
+                
+                Spacer()
+                
+                capturePhotoButton
+            }
 
         }
         .ignoresSafeArea()
@@ -77,6 +85,25 @@ struct ContentView: View {
             .padding(.horizontal, 8)
     }
     
+    var capturePhotoButton: some View {
+        Button {
+            #warning("Capture photo")
+        } label: {
+            LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
+                .clipShape(Circle())
+                .background {
+                    Circle().foregroundColor(.white)
+                }
+            
+                .padding(4)
+                .frame(width: 96, height: 96)
+                .background {
+                    Circle().stroke(lineWidth: 3)
+                        .foregroundColor(.white)
+                }
+        }
+        .padding([.horizontal, .bottom], 32)
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
