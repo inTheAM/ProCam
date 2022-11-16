@@ -113,7 +113,7 @@ struct CameraControlsGrid: View {
     
     var timerButton: some View {
         Button {
-            #warning("Switch between front and rear cameras")
+            #warning("Show timer settings")
         } label: {
             Image(systemName: "timer")
                 .font(.system(size: 32, weight: .light, design: .monospaced))
@@ -126,7 +126,7 @@ struct CameraControlsGrid: View {
     
     var whiteBalanceButton: some View {
         Button {
-            #warning("Switch between white balance mode")
+            #warning("Show white balance modes")
         } label: {
             Text("AWB")
                 .foregroundColor(.white)
@@ -138,7 +138,7 @@ struct CameraControlsGrid: View {
     
     var settingsButton: some View {
         Button {
-            #warning("Switch between front and rear cameras")
+            #warning("Show app settings")
         } label: {
             Image(systemName: "gear")
                 .font(.system(size: 32, weight: .light, design: .monospaced))
