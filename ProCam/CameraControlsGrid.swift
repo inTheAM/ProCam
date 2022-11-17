@@ -47,6 +47,9 @@ struct CameraControlsGrid: View {
             .padding(.vertical)
         }
         .padding(.horizontal)
+        .background {
+            LinearGradient(colors: [.clear, .black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+        }
         // Simultaneous Gesture is used to attach gestures to views which already have a gesture attached.
         // For example, the grid elements are buttons, which already recognize tap gestures.
         // To attach a drag gesture to the buttons, `.simultaneousGesture` is preferred to `.gesture`
@@ -78,9 +81,6 @@ struct CameraControlsGrid: View {
                     }
                 }
         )
-        .background {
-            LinearGradient(colors: [.clear, .black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-        }
         .offset(y: offset)
         .animation(.default, value: offset)
         // Detect when the application goes to the background or becomes inactive and reset the offset
