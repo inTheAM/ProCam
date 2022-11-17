@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
-            
             HStack {
                 histogram
                 
@@ -31,7 +30,6 @@ struct ContentView: View {
                         .frame(height: 80)
                 }
                 CameraControlsGrid()
-                
             }
             
             Group {
@@ -86,12 +84,14 @@ struct ContentView: View {
                 .tint(.gray)
         }
         .padding(.trailing)
+        .accessibilityLabel("Show menu to switch between auto and manual modes.")
     }
     
     #warning("Show camera preview")
     var cameraPreview: some View {
         Rectangle()
             .foregroundColor(.cyan.opacity(0.2))
+            .accessibilityLabel("Camera preview.")
     }
     
     var balanceIndicator: some View {
@@ -99,6 +99,7 @@ struct ContentView: View {
             .stroke()
             .foregroundColor(.gray)
             .frame(width: 32, height: 32)
+            .accessibilityHidden(true)
     }
     
     var autoManualFocusButton: some View {
@@ -113,6 +114,7 @@ struct ContentView: View {
                 }
         }
         .padding()
+        .accessibilityLabel("Switch between autofocus and manual focus.")
     }
     
     var portraitModeButton: some View {
@@ -130,6 +132,7 @@ struct ContentView: View {
                 }
         }
         .padding()
+        .accessibilityLabel("Activate portrait mode.")
     }
     
     #warning("Show last image in library")
@@ -139,6 +142,7 @@ struct ContentView: View {
             .cornerRadius(8)
             .frame(width: 96, height: 96)
             .padding(.horizontal, 8)
+            .accessibilityLabel("Show last photo taken.")
     }
     
     var capturePhotoButton: some View {
@@ -159,6 +163,7 @@ struct ContentView: View {
                 }
         }
         .padding([.horizontal, .bottom], 32)
+        .accessibilityLabel("Capture photo.")
     }
     
     var switchBetweenRearCamerasButton: some View {
@@ -174,6 +179,7 @@ struct ContentView: View {
             
         }
         .padding([.horizontal, .bottom], 32)
+        .accessibilityLabel("Switch between rear cameras. Currently at 1x")
     }
 }
 
