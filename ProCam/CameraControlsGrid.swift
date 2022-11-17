@@ -11,20 +11,28 @@ import SwiftUI
 /// Implemented as a Vertical Stack containing the drag indicator and the grid of controls.
 /// The grid of controls is initally offset downards so that only the top row is visible in the camera preview
 struct CameraControlsGrid: View {
+    @State private var offset: CGFloat = 88
     
     var body: some View {
         VStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: 4)
-                .frame(width: 40, height: 6)
-                .foregroundColor(.gray)
-                .offset(y: 16)
+            HStack(spacing: -6) {
+                RoundedRectangle(cornerRadius: 4)
+                    .frame( height: 6)
+                    .foregroundColor(.gray)
+                    .rotationEffect(dragIndicatorAngle)
+                RoundedRectangle(cornerRadius: 4)
+                    .frame( height: 6)
+                    .foregroundColor(.gray)
+                    .rotationEffect(-dragIndicatorAngle)
+            }
+            .frame(width: 40)
             
             LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5)) {
                 histogramButton
+                Spacer()
                 flashlightButton
                 Spacer()
                 gridOverlayButton
-                Spacer()
                 switchFrontRearCameraButton
                 heicRawButton
                 timerButton
@@ -33,7 +41,20 @@ struct CameraControlsGrid: View {
             }
         }
         .padding()
-        .offset(y: 88)
+        .offset(y: offset)
+        .animation(.default, value: offset)
+    }
+    
+    /// The angle by which the rectangle should be rotated by the view.
+    var dragIndicatorAngle: Angle {
+        // Calculate the distance between the current position and the maximum offset for the view ie 88
+        let currentOffset = 88 - offset
+        
+        // Use the calculated distance to calclate the angle between 0 and 30 degrees the rectangle should be rotated to
+        let angle = currentOffset/88 * 20
+        
+        // Return the calculated angle
+        return Angle(degrees: angle)
     }
     
     // MARK: - Grid Elements
@@ -45,7 +66,7 @@ struct CameraControlsGrid: View {
         } label: {
             Image(systemName: "waveform")
                 // Sets image font and design.
-                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .font(.system(size: 28, weight: .light, design: .monospaced))
                 // Sets frame height and aligns the image to the top of the frame.
                 .frame(height: 20, alignment: .top)
                 // Clips the image to only show content inside the frame.
@@ -53,7 +74,6 @@ struct CameraControlsGrid: View {
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show histogram.")
     }
     
@@ -63,11 +83,10 @@ struct CameraControlsGrid: View {
             #warning("Toggle flashlight")
         } label: {
             Image(systemName: "bolt.slash.fill")
-                .font(.system(size: 32, weight: .ultraLight, design: .monospaced))
+                .font(.system(size: 28, weight: .ultraLight, design: .monospaced))
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Turn on flashlight.")
     }
     
@@ -77,17 +96,15 @@ struct CameraControlsGrid: View {
             #warning("Toggle grid visibility")
         } label: {
             Image(systemName: "grid")
-                .font(.system(size: 32, weight: .ultraLight, design: .monospaced))
+                .font(.system(size: 28, weight: .ultraLight, design: .monospaced))
                 .foregroundColor(.white.opacity(0.4))
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
                         .foregroundColor(.white)
                 }
-                
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show overlay grid.")
     }
     
@@ -97,13 +114,11 @@ struct CameraControlsGrid: View {
             #warning("Switch between front and rear cameras")
         } label: {
             Image(systemName: "arrow.triangle.2.circlepath")
-                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .font(.system(size: 28, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
                 .rotationEffect(Angle(degrees: 50))
-                
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Switch to front camera.")
     }
     
@@ -114,6 +129,7 @@ struct CameraControlsGrid: View {
         } label: {
             Text("HEIC")
                 .font(.caption)
+                .fixedSize()
                 .foregroundColor(.white)
                 .padding(5)
                 .background {
@@ -123,7 +139,6 @@ struct CameraControlsGrid: View {
                 }
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
@@ -133,12 +148,11 @@ struct CameraControlsGrid: View {
             #warning("Show timer settings")
         } label: {
             Image(systemName: "timer")
-                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .font(.system(size: 28, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
                 
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Change timer settings.")
     }
     
@@ -148,11 +162,10 @@ struct CameraControlsGrid: View {
             #warning("Show white balance modes")
         } label: {
             Text("AWB")
+                .fixedSize()
                 .foregroundColor(.white)
-                
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Change white balance modes.")
     }
     
@@ -162,12 +175,10 @@ struct CameraControlsGrid: View {
             #warning("Show app settings")
         } label: {
             Image(systemName: "gear")
-                .font(.system(size: 32, weight: .light, design: .monospaced))
+                .font(.system(size: 28, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
-                
         }
         .padding()
-        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show ap settings.")
     }
 }
