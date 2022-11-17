@@ -8,6 +8,8 @@
 import SwiftUI
 
 extension Image {
+    
+    /// Makes an `Image` resizable and sets the content mode to `fit`.
     func resizedToFit() -> some View {
         self
             .resizable()
