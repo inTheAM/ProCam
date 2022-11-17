@@ -199,7 +199,8 @@ struct ContentView: View {
                 .foregroundColor(.white)
             
         }
-        .padding([.horizontal, .bottom], 32)
+        .padding(.horizontal, 28)
+        .padding(.bottom, 32)
         .accessibilityLabel("Switch between rear cameras. Currently at 1x")
     }
 }
