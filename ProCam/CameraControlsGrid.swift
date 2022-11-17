@@ -20,17 +20,17 @@ struct CameraControlsGrid: View {
     
     var body: some View {
         VStack(spacing: 4) {
-            HStack(spacing: -6) {
+            HStack(spacing: -4) {
                 RoundedRectangle(cornerRadius: 4)
-                    .frame( height: 6)
+                    .frame( height: 4)
                     .foregroundColor(.gray)
                     .rotationEffect(dragIndicatorAngle)
                 RoundedRectangle(cornerRadius: 4)
-                    .frame( height: 6)
+                    .frame( height: 4)
                     .foregroundColor(.gray)
                     .rotationEffect(-dragIndicatorAngle)
             }
-            .frame(width: 40)
+            .frame(width: 32)
             
             LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5), spacing: 40) {
                 histogramButton
