@@ -45,6 +45,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Show histogram.")
     }
     
     var flashlightButton: some View {
@@ -59,6 +60,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Turn on flashlight.")
     }
     
     var gridOverlayButton: some View {
@@ -77,6 +79,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Show overlay grid.")
     }
     
     var switchFrontRearCameraButton: some View {
@@ -91,6 +94,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Switch to front camera.")
     }
     
     var heicRawButton: some View {
@@ -109,6 +113,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
     var timerButton: some View {
@@ -122,6 +127,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Change timer settings.")
     }
     
     var whiteBalanceButton: some View {
@@ -134,6 +140,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Change white balance modes.")
     }
     
     var settingsButton: some View {
@@ -147,6 +154,7 @@ struct CameraControlsGrid: View {
         }
         .padding()
         .frame(height: 56, alignment: .center)
+        .accessibilityLabel("Show ap settings.")
     }
 }
 
