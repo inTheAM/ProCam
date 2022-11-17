@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// A circular background for a view.
+/// Adds two circles, one with a stroke design and another filled, with some level of opacity.
 struct CircleBackground: View {
     let color: Color
     var body: some View {
