@@ -30,47 +30,51 @@ struct ContentView: View {
                         }
                     Rectangle()
                         .foregroundColor(.black)
-                        .frame(height: 80)
+                        .frame(height: 274)
                 }
-                CameraControlsGrid()
-            }
-            
-            Group {
-                Divider()
-                Divider()
-            }
-            
-            Group {
                 
-                // The Autofocus button and Portrait mode button
-                HStack {
-                    autoManualFocusButton
-                    
-                    Spacer(minLength: 0)
-                    
-                    portraitModeButton
+                VStack {
+                    Spacer()
+                    CameraControlsGrid()
+                        .padding(.bottom, 212)
                 }
-                .padding(.horizontal)
                 
-                // The last image in the user's library,
-                // capture button and
-                // button for switching between the different rear cameras.
-                HStack(alignment: .bottom) {
-                    lastImageInLibrary
-                    
+                VStack(spacing: 0) {
                     Spacer()
-                    
-                    capturePhotoButton
-                    
-                    Spacer()
-                    
-                    switchBetweenRearCamerasButton
+                    Divider()
+                    VStack {
+                        
+                        // The Autofocus button and Portrait mode button
+                        HStack {
+                            autoManualFocusButton
+                            
+                            Spacer(minLength: 0)
+                            
+                            portraitModeButton
+                        }
+                        .padding([.horizontal, .top], 8)
+                        
+                        // The last image in the user's library,
+                        // capture button and
+                        // button for switching between the different rear cameras.
+                        HStack(alignment: .bottom) {
+                            lastImageInLibrary
+                            
+                            Spacer()
+                            
+                            capturePhotoButton
+                            
+                            Spacer()
+                            
+                            switchBetweenRearCamerasButton
+                        }
+                    }
+                    .background {
+                        Color.white.opacity(0.05)
+                            .background(Color.black)
+                    }
                 }
-                .padding(.top)
-            }
-            .background {
-                Color.white.opacity(0.05)
-            }
+            }            
         }
         .ignoresSafeArea()
     }
