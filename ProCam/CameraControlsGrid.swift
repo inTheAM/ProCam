@@ -7,13 +7,17 @@
 
 import SwiftUI
 
+/// The grid of controls over the camera.
+/// Implemented as a Vertical Stack containing the drag indicator and the grid of controls.
+/// The grid of controls is initally offset downards so that only the top row is visible in the camera preview
 struct CameraControlsGrid: View {
+    
     var body: some View {
         VStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 4)
                 .frame(width: 40, height: 6)
                 .foregroundColor(.gray)
-                .offset(y: 88)
+                .offset(y: 16)
             
             LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5)) {
                 histogramButton
@@ -27,42 +31,47 @@ struct CameraControlsGrid: View {
                 whiteBalanceButton
                 settingsButton
             }
-            .padding()
-            .offset(y: 77)
         }
+        .padding()
+        .offset(y: 88)
     }
     
+    // MARK: - Grid Elements
+    
+    /// A button that toggles the histogram visibility.
     var histogramButton: some View {
         Button {
             #warning("Toggle histogram visibility")
         } label: {
             Image(systemName: "waveform")
+                // Sets image font and design.
                 .font(.system(size: 32, weight: .light, design: .monospaced))
-                .aspectRatio(contentMode: .fit)
+                // Sets frame height and aligns the image to the top of the frame.
                 .frame(height: 20, alignment: .top)
+                // Clips the image to only show content inside the frame.
                 .clipped()
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show histogram.")
     }
     
+    /// A button that toggles the flash.
     var flashlightButton: some View {
         Button {
             #warning("Toggle flashlight")
         } label: {
             Image(systemName: "bolt.slash.fill")
-                .scaledToFit()
                 .font(.system(size: 32, weight: .ultraLight, design: .monospaced))
-                .aspectRatio(1, contentMode: .fit)
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Turn on flashlight.")
     }
     
+    /// A button that toggles the visibility of the grid overlay on the camera preview.
     var gridOverlayButton: some View {
         Button {
             #warning("Toggle grid visibility")
@@ -78,10 +87,11 @@ struct CameraControlsGrid: View {
                 
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show overlay grid.")
     }
     
+    /// A button that switches between the front and rear cameras.
     var switchFrontRearCameraButton: some View {
         Button {
             #warning("Switch between front and rear cameras")
@@ -93,10 +103,11 @@ struct CameraControlsGrid: View {
                 
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Switch to front camera.")
     }
     
+    /// A button that switches between HEIC and RAW photo modes.
     var heicRawButton: some View {
         Button {
             #warning("Switch between HEIC and RAW formats")
@@ -112,10 +123,11 @@ struct CameraControlsGrid: View {
                 }
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
+    /// A button that shows the timer settings.
     var timerButton: some View {
         Button {
             #warning("Show timer settings")
@@ -126,10 +138,11 @@ struct CameraControlsGrid: View {
                 
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Change timer settings.")
     }
     
+    /// A button that shows white balance options.
     var whiteBalanceButton: some View {
         Button {
             #warning("Show white balance modes")
@@ -139,10 +152,11 @@ struct CameraControlsGrid: View {
                 
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Change white balance modes.")
     }
     
+    /// A button that brings up the settings modal view.
     var settingsButton: some View {
         Button {
             #warning("Show app settings")
@@ -153,7 +167,7 @@ struct CameraControlsGrid: View {
                 
         }
         .padding()
-        .frame(height: 56, alignment: .center)
+        .frame(height: 72, alignment: .center)
         .accessibilityLabel("Show ap settings.")
     }
 }
