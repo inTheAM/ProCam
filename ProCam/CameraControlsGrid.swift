@@ -11,7 +11,12 @@ import SwiftUI
 /// Implemented as a Vertical Stack containing the drag indicator and the grid of controls.
 /// The grid of controls is initally offset downards so that only the top row is visible in the camera preview
 struct CameraControlsGrid: View {
-    @State private var offset: CGFloat = 88
+    /// The vertical offset for the view.
+    /// Initialized at 68 to offset the view downwards.
+    @State private var offset: CGFloat = 68
+    
+    /// Detects when the state of the application changes eg when the user moves it to the background, the app becomes inactive or the user switches back to the app.
+    @Environment(\.scenePhase) var scenePhase
     
     var body: some View {
         VStack(spacing: 4) {
@@ -27,7 +32,7 @@ struct CameraControlsGrid: View {
             }
             .frame(width: 40)
             
-            LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5)) {
+            LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5), spacing: 40) {
                 histogramButton
                 Spacer()
                 flashlightButton
@@ -39,19 +44,60 @@ struct CameraControlsGrid: View {
                 whiteBalanceButton
                 settingsButton
             }
+            .padding(.vertical)
         }
-        .padding()
+        .padding(.horizontal)
+        // Simultaneous Gesture is used to attach gestures to views which already have a gesture attached.
+        // For example, the grid elements are buttons, which already recognize tap gestures.
+        // To attach a drag gesture to the buttons, `.simultaneousGesture` is preferred to `.gesture`
+        .simultaneousGesture(
+            
+            // Declare a drag gesture with a minimum distance.
+            // A minimum distance of 0 means taps will also be recognized.
+            DragGesture(minimumDistance: 10)
+                // When the user drags on the screen, the changes are received here.
+                .onChanged { value in
+                    // The distance the drag gesture has covered thus far
+                    let distance = value.translation.height * 0.5
+                    
+                    // Setting the allowed distance for which the drag gesture will be used to perform an action, eg offsetting a view.
+                    let allowedDistance = max(min(distance, 68), 0)
+                    
+                    // Assigning the allowable distance to the view offset
+                    offset = allowedDistance
+                    
+                }
+                // When the drag gesture is over, we receive data about the entire drag here.
+                .onEnded { value in
+                    // If the current offset is above 20, offset the view down to 68
+                    if offset > 20 {
+                        offset = 68
+                    // If the current offset is less than 20, offset the view up to 0
+                    } else if offset < 20 {
+                        offset = 0
+                    }
+                }
+        )
+        .background {
+            LinearGradient(colors: [.clear, .black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+        }
         .offset(y: offset)
         .animation(.default, value: offset)
+        // Detect when the application goes to the background or becomes inactive and reset the offset
+        .onChange(of: scenePhase) { newScenePhase in
+            if newScenePhase == .background || newScenePhase == .inactive {
+                offset = 68
+            }
+        }
     }
     
     /// The angle by which the rectangle should be rotated by the view.
     var dragIndicatorAngle: Angle {
-        // Calculate the distance between the current position and the maximum offset for the view ie 88
-        let currentOffset = 88 - offset
+        // Calculate the distance between the current position and the maximum offset for the view ie 68
+        let currentOffset = 68 - offset
         
         // Use the calculated distance to calclate the angle between 0 and 30 degrees the rectangle should be rotated to
-        let angle = currentOffset/88 * 20
+        let angle = currentOffset/68 * 20
         
         // Return the calculated angle
         return Angle(degrees: angle)
@@ -66,6 +112,7 @@ struct CameraControlsGrid: View {
         } label: {
             Image(systemName: "waveform")
                 // Sets image font and design.
+                .scaledToFill()
                 .font(.system(size: 28, weight: .light, design: .monospaced))
                 // Sets frame height and aligns the image to the top of the frame.
                 .frame(height: 20, alignment: .top)
@@ -73,7 +120,7 @@ struct CameraControlsGrid: View {
                 .clipped()
                 .foregroundColor(.white)
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Show histogram.")
     }
     
@@ -83,10 +130,10 @@ struct CameraControlsGrid: View {
             #warning("Toggle flashlight")
         } label: {
             Image(systemName: "bolt.slash.fill")
-                .font(.system(size: 28, weight: .ultraLight, design: .monospaced))
+                .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
                 .foregroundColor(.white)
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Turn on flashlight.")
     }
     
@@ -96,7 +143,7 @@ struct CameraControlsGrid: View {
             #warning("Toggle grid visibility")
         } label: {
             Image(systemName: "grid")
-                .font(.system(size: 28, weight: .ultraLight, design: .monospaced))
+                .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
                 .foregroundColor(.white.opacity(0.4))
                 .background {
                     RoundedRectangle(cornerRadius: 4)
@@ -104,7 +151,7 @@ struct CameraControlsGrid: View {
                         .foregroundColor(.white)
                 }
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Show overlay grid.")
     }
     
@@ -114,11 +161,11 @@ struct CameraControlsGrid: View {
             #warning("Switch between front and rear cameras")
         } label: {
             Image(systemName: "arrow.triangle.2.circlepath")
-                .font(.system(size: 28, weight: .light, design: .monospaced))
+                .font(.system(size: 20, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
                 .rotationEffect(Angle(degrees: 50))
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Switch to front camera.")
     }
     
@@ -138,7 +185,7 @@ struct CameraControlsGrid: View {
                         .foregroundColor(.white)
                 }
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
@@ -148,11 +195,11 @@ struct CameraControlsGrid: View {
             #warning("Show timer settings")
         } label: {
             Image(systemName: "timer")
-                .font(.system(size: 28, weight: .light, design: .monospaced))
+                .font(.system(size: 20, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
                 
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Change timer settings.")
     }
     
@@ -165,7 +212,7 @@ struct CameraControlsGrid: View {
                 .fixedSize()
                 .foregroundColor(.white)
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Change white balance modes.")
     }
     
@@ -175,10 +222,10 @@ struct CameraControlsGrid: View {
             #warning("Show app settings")
         } label: {
             Image(systemName: "gear")
-                .font(.system(size: 28, weight: .light, design: .monospaced))
+                .font(.system(size: 20, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
         }
-        .padding()
+//        .padding()
         .accessibilityLabel("Show ap settings.")
     }
 }
