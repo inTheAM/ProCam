@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
+            // The histogram view and button to toggle between auto/manual modes.
             HStack {
                 histogram
                 
@@ -19,6 +20,8 @@ struct ContentView: View {
             }
             .padding()
             
+            // The camera preview and bottom controls background,
+            // with the controls overlaid in a `ZStack`.
             ZStack(alignment: .bottom) {
                 VStack {
                     cameraPreview
@@ -38,6 +41,8 @@ struct ContentView: View {
             }
             
             Group {
+                
+                // The Autofocus button and Portrait mode button
                 HStack {
                     autoManualFocusButton
                     
@@ -47,6 +52,9 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
                 
+                // The last image in the user's library,
+                // capture button and
+                // button for switching between the different rear cameras.
                 HStack(alignment: .bottom) {
                     lastImageInLibrary
                     
@@ -68,11 +76,13 @@ struct ContentView: View {
     }
     
     #warning("Show histogram")
+    /// The histogram view.
     var histogram: some View {
         Text("Histogram")
             .font(.caption)
     }
     
+    /// The button to toggle between auto and manual camera modes.
     var autoManualModeButton: some View {
         Button {
             #warning("Toggle Auto/Manual mode")
@@ -88,12 +98,14 @@ struct ContentView: View {
     }
     
     #warning("Show camera preview")
+    /// The preview of what the camera sees.
     var cameraPreview: some View {
         Rectangle()
             .foregroundColor(.cyan.opacity(0.2))
             .accessibilityLabel("Camera preview.")
     }
     
+    /// The indicator for device position, either horizontal or vertical.
     var balanceIndicator: some View {
         Circle()
             .stroke()
@@ -102,6 +114,7 @@ struct ContentView: View {
             .accessibilityHidden(true)
     }
     
+    /// The button to toggle between autofocus and manual focus.
     var autoManualFocusButton: some View {
         Button {
             #warning("Toggle Auto/Manual Focus")
@@ -117,6 +130,7 @@ struct ContentView: View {
         .accessibilityLabel("Switch between autofocus and manual focus.")
     }
     
+    /// The button to turn on or off Portrait Mode.
     var portraitModeButton: some View {
         Button {
             #warning("(De)Activate Portrait Mode")
@@ -135,7 +149,8 @@ struct ContentView: View {
         .accessibilityLabel("Activate portrait mode.")
     }
     
-    #warning("Show last image in library")
+#warning("Show last image in library")
+    /// The preview of the last image in the user's photo library.
     var lastImageInLibrary: some View {
         Rectangle()
             .aspectRatio(contentMode: .fit)
@@ -145,6 +160,7 @@ struct ContentView: View {
             .accessibilityLabel("Show last photo taken.")
     }
     
+    /// The button to capture the photo.
     var capturePhotoButton: some View {
         Button {
             #warning("Capture photo")
@@ -154,11 +170,11 @@ struct ContentView: View {
                 .background {
                     Circle().foregroundColor(.white)
                 }
-            
                 .padding(4)
                 .frame(width: 80, height: 80)
                 .background {
-                    Circle().stroke(lineWidth: 3)
+                    Circle()
+                        .stroke(lineWidth: 3)
                         .foregroundColor(.white)
                 }
         }
@@ -166,6 +182,7 @@ struct ContentView: View {
         .accessibilityLabel("Capture photo.")
     }
     
+    /// The button to switch between the different rear cameras.
     var switchBetweenRearCamerasButton: some View {
         Button {
             #warning("Switch between rear cameras")
