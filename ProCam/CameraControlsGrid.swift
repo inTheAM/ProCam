@@ -20,6 +20,8 @@ struct CameraControlsGrid: View {
     
     @State private var isShowingTimerSettings = false
     
+    @State private var isShowingWhiteBalanceSettings = false
+    
     var body: some View {
         VStack(spacing: 4) {
             dragIndicator
@@ -32,6 +34,8 @@ struct CameraControlsGrid: View {
                 gridOverlayButton
                 if isShowingTimerSettings {
                     timerSettings
+                } else if isShowingWhiteBalanceSettings {
+                    whiteBalanceSettings
                 } else {
                     Group {
                         switchFrontRearCameraButton
@@ -84,6 +88,7 @@ struct CameraControlsGrid: View {
         .offset(y: offset)
         .animation(.default, value: offset)
         .animation(.default, value: isShowingTimerSettings)
+        .animation(.default, value: isShowingWhiteBalanceSettings)
         // Detect when the application goes to the background or becomes inactive and reset the offset
         .onChange(of: scenePhase) { newScenePhase in
             if newScenePhase == .background || newScenePhase == .inactive {
@@ -220,7 +225,7 @@ struct CameraControlsGrid: View {
     var timerSettings: some View {
         Group {
             Text("TIMER")
-//                .font(.caption2)
+                .font(.caption)
                 .foregroundColor(.gray)
             Button {
                 #warning("Set timer off")
@@ -283,16 +288,71 @@ struct CameraControlsGrid: View {
         .transition(.move(edge: .trailing))
     }
     
+    // MARK: - White balance settings
     /// A button that shows white balance options.
     var whiteBalanceButton: some View {
         Button {
             #warning("Show white balance modes")
+            isShowingWhiteBalanceSettings = true
         } label: {
             Text("AWB")
                 .fixedSize()
                 .foregroundColor(.white)
         }
         .accessibilityLabel("Change white balance modes.")
+    }
+        
+    var whiteBalanceSettings: some View {
+        Group {
+            Text("WHITE BALANCE")
+                .foregroundColor(.gray)
+                .font(.caption)
+            Button {
+                #warning("Set white balance auto")
+                isShowingWhiteBalanceSettings = false
+            } label: {
+                Text("AWB")
+                    .fixedSize()
+                    .foregroundColor(.white)
+            }
+            .accessibilityLabel("Turn on auto white balance.")
+            
+            Button {
+                #warning("Set white balance")
+                isShowingWhiteBalanceSettings = false
+            } label: {
+                Image(systemName: "cloud")
+                    .renderingMode(.template)
+                    .resizedToFit()
+                    .frame(width: 32)
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 3s.")
+            
+            Button {
+                #warning("Set white balance")
+                isShowingWhiteBalanceSettings = false
+            } label: {
+                Image(systemName: "sun.max")
+                    .renderingMode(.template)
+                    .resizedToFit()
+                    .frame(width: 32)
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 10s.")
+            
+            Button {
+                #warning("Set white balance")
+                isShowingWhiteBalanceSettings = false
+            } label: {
+                Image("Light")
+                    .resizable()
+                    .frame(width: 32, height: 28)
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 30s.")
+        }
+        .transition(.move(edge: .trailing))
     }
     
     /// A button that brings up the settings modal view.
