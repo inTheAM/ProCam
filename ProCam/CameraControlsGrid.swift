@@ -73,11 +73,13 @@ struct CameraControlsGrid: View {
                 // When the drag gesture is over, we receive data about the entire drag here.
                 .onEnded { value in
                     // If the current offset is above 20, offset the view down to 68
-                    if offset > 20 {
-                        offset = 68
-                    // If the current offset is less than 20, offset the view up to 0
-                    } else if offset < 20 {
+                    if offset < 20 {
                         offset = 0
+                        HapticFeedback.play(.success)
+                    // If the current offset is less than 20, offset the view up to 0
+                    } else {
+                        offset = 68
+                        HapticFeedback.play(.success)
                     }
                 }
         )
@@ -120,7 +122,6 @@ struct CameraControlsGrid: View {
                 .clipped()
                 .foregroundColor(.white)
         }
-//        .padding()
         .accessibilityLabel("Show histogram.")
     }
     
@@ -133,7 +134,6 @@ struct CameraControlsGrid: View {
                 .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
                 .foregroundColor(.white)
         }
-//        .padding()
         .accessibilityLabel("Turn on flashlight.")
     }
     
@@ -151,7 +151,6 @@ struct CameraControlsGrid: View {
                         .foregroundColor(.white)
                 }
         }
-//        .padding()
         .accessibilityLabel("Show overlay grid.")
     }
     
@@ -165,7 +164,6 @@ struct CameraControlsGrid: View {
                 .foregroundColor(.white)
                 .rotationEffect(Angle(degrees: 50))
         }
-//        .padding()
         .accessibilityLabel("Switch to front camera.")
     }
     
@@ -175,17 +173,16 @@ struct CameraControlsGrid: View {
             #warning("Switch between HEIC and RAW formats")
         } label: {
             Text("HEIC")
-                .font(.caption)
+                .font(.caption2)
                 .fixedSize()
                 .foregroundColor(.white)
                 .padding(5)
                 .background {
-                    RoundedRectangle(cornerRadius: 4)
+                    RoundedRectangle(cornerRadius: 5)
                         .stroke(lineWidth: 2)
                         .foregroundColor(.white)
                 }
         }
-//        .padding()
         .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
@@ -199,7 +196,6 @@ struct CameraControlsGrid: View {
                 .foregroundColor(.white)
                 
         }
-//        .padding()
         .accessibilityLabel("Change timer settings.")
     }
     
@@ -212,7 +208,6 @@ struct CameraControlsGrid: View {
                 .fixedSize()
                 .foregroundColor(.white)
         }
-//        .padding()
         .accessibilityLabel("Change white balance modes.")
     }
     
@@ -225,7 +220,6 @@ struct CameraControlsGrid: View {
                 .font(.system(size: 20, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
         }
-//        .padding()
         .accessibilityLabel("Show ap settings.")
     }
 }
