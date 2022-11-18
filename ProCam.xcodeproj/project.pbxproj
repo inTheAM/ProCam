@@ -14,6 +14,7 @@
 		DB65E8EE2925241F00C64A14 /* CircleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8ED2925241F00C64A14 /* CircleBackground.swift */; };
 		DB65E8F12925272400C64A14 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F02925272400C64A14 /* Image.swift */; };
 		DB65E8F32925343100C64A14 /* CameraControlsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F22925343100C64A14 /* CameraControlsGrid.swift */; };
+		DB65E8F529275BAD00C64A14 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		DB65E8ED2925241F00C64A14 /* CircleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleBackground.swift; sourceTree = "<group>"; };
 		DB65E8F02925272400C64A14 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		DB65E8F22925343100C64A14 /* CameraControlsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraControlsGrid.swift; sourceTree = "<group>"; };
+		DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				DB65E8F02925272400C64A14 /* Image.swift */,
+				DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 				DB65E8F32925343100C64A14 /* CameraControlsGrid.swift in Sources */,
 				DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */,
 				DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */,
+				DB65E8F529275BAD00C64A14 /* HapticFeedback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
