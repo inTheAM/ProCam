@@ -93,8 +93,8 @@ struct ContentView: View {
         } label: {
             Image("AFTriangle")
                 .renderingMode(.template)
-                .resizedToFit()
-                .frame(width: 16, height: 16)
+                .resizable()
+                .frame(width: 16, height: 12)
                 .tint(.gray)
         }
         .padding(.trailing)
@@ -124,6 +124,7 @@ struct ContentView: View {
             #warning("Toggle Auto/Manual Focus")
         } label: {
             Text("AF")
+                .font(.system(size: 16, weight: .light, design: .rounded))
                 .padding(10)
                 .foregroundColor(.yellow)
                 .background {
@@ -142,7 +143,7 @@ struct ContentView: View {
             Image("PortraitMode")
                 .renderingMode(.template)
                 .resizedToFit()
-                .frame(width: 24, height: 24)
+                .frame(width: 20, height: 20)
                 .padding(10)
                 .foregroundColor(.gray)
                 .background {
