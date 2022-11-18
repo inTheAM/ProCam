@@ -18,19 +18,11 @@ struct CameraControlsGrid: View {
     /// Detects when the state of the application changes eg when the user moves it to the background, the app becomes inactive or the user switches back to the app.
     @Environment(\.scenePhase) var scenePhase
     
+    @State private var isShowingTimerSettings = false
+    
     var body: some View {
         VStack(spacing: 4) {
-            HStack(spacing: -4) {
-                RoundedRectangle(cornerRadius: 4)
-                    .frame( height: 4)
-                    .foregroundColor(.gray)
-                    .rotationEffect(dragIndicatorAngle)
-                RoundedRectangle(cornerRadius: 4)
-                    .frame( height: 4)
-                    .foregroundColor(.gray)
-                    .rotationEffect(-dragIndicatorAngle)
-            }
-            .frame(width: 32)
+            dragIndicator
             
             LazyVGrid(columns: [GridItem].init(repeating: GridItem(.flexible()), count: 5), spacing: 40) {
                 histogramButton
@@ -38,11 +30,17 @@ struct CameraControlsGrid: View {
                 flashlightButton
                 Spacer()
                 gridOverlayButton
-                switchFrontRearCameraButton
-                heicRawButton
-                timerButton
-                whiteBalanceButton
-                settingsButton
+                if isShowingTimerSettings {
+                    timerSettings
+                } else {
+                    Group {
+                        switchFrontRearCameraButton
+                        heicRawButton
+                        timerButton
+                        whiteBalanceButton
+                        settingsButton
+                    }
+                }
             }
             .padding(.vertical)
         }
@@ -85,12 +83,30 @@ struct CameraControlsGrid: View {
         )
         .offset(y: offset)
         .animation(.default, value: offset)
+        .animation(.default, value: isShowingTimerSettings)
         // Detect when the application goes to the background or becomes inactive and reset the offset
         .onChange(of: scenePhase) { newScenePhase in
             if newScenePhase == .background || newScenePhase == .inactive {
                 offset = 68
             }
         }
+    }
+    
+    // MARK: - Drag Indicator
+    
+    /// The drag indicator
+    var dragIndicator: some View {
+        HStack(spacing: -4) {
+            RoundedRectangle(cornerRadius: 4)
+                .frame( height: 4)
+                .foregroundColor(.gray)
+                .rotationEffect(dragIndicatorAngle)
+            RoundedRectangle(cornerRadius: 4)
+                .frame( height: 4)
+                .foregroundColor(.gray)
+                .rotationEffect(-dragIndicatorAngle)
+        }
+        .frame(width: 32)
     }
     
     /// The angle by which the rectangle should be rotated by the view.
@@ -186,17 +202,85 @@ struct CameraControlsGrid: View {
         .accessibilityLabel("Switch from HEIC to RAW format.")
     }
     
+    // MARK: Timer settings
     /// A button that shows the timer settings.
     var timerButton: some View {
         Button {
             #warning("Show timer settings")
+            isShowingTimerSettings = true
         } label: {
             Image(systemName: "timer")
-                .font(.system(size: 20, weight: .light, design: .monospaced))
+                .font(.system(size: 24, weight: .light, design: .monospaced))
                 .foregroundColor(.white)
                 
         }
         .accessibilityLabel("Change timer settings.")
+    }
+    
+    var timerSettings: some View {
+        Group {
+            Text("TIMER")
+//                .font(.caption2)
+                .foregroundColor(.gray)
+            Button {
+                #warning("Set timer off")
+                isShowingTimerSettings = false
+            } label: {
+                Text("OFF")
+                    .fixedSize()
+                    .foregroundColor(.white)
+            }
+            .accessibilityLabel("Turn off capture timer.")
+            
+            Button {
+                #warning("Set timer to 3s")
+                isShowingTimerSettings = false
+            } label: {
+                Image("Timer")
+                    .renderingMode(.template)
+                    .resizedToFit()
+                    .frame(width: 28)
+                    .overlay {
+                        Text("3")
+                            .font(.caption)
+                    }
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 3s.")
+            
+            Button {
+                #warning("Set timer to 10s")
+                isShowingTimerSettings = false
+            } label: {
+                Image("Timer")
+                    .renderingMode(.template)
+                    .resizedToFit()
+                    .frame(width: 28)
+                    .overlay {
+                        Text("10")
+                            .font(.caption)
+                    }
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 10s.")
+            
+            Button {
+                #warning("Set timer to 30s")
+                isShowingTimerSettings = false
+            } label: {
+                Image("Timer")
+                    .renderingMode(.template)
+                    .resizedToFit()
+                    .frame(width: 28)
+                    .overlay {
+                        Text("30")
+                            .font(.caption)
+                    }
+                    .tint(.white)
+            }
+            .accessibilityLabel("Set timer to 30s.")
+        }
+        .transition(.move(edge: .trailing))
     }
     
     /// A button that shows white balance options.
