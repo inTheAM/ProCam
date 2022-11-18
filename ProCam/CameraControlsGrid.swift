@@ -34,8 +34,10 @@ struct CameraControlsGrid: View {
                 gridOverlayButton
                 if isShowingTimerSettings {
                     timerSettings
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .scale))
                 } else if isShowingWhiteBalanceSettings {
                     whiteBalanceSettings
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .scale))
                 } else {
                     Group {
                         switchFrontRearCameraButton
@@ -44,9 +46,12 @@ struct CameraControlsGrid: View {
                         whiteBalanceButton
                         settingsButton
                     }
+                    .transition(.scale)
                 }
             }
             .padding(.vertical)
+            .animation(.default, value: isShowingTimerSettings)
+            .animation(.default, value: isShowingWhiteBalanceSettings)
         }
         .padding(.horizontal)
         .background {
@@ -87,10 +92,8 @@ struct CameraControlsGrid: View {
                     }
                 }
         )
-        .offset(y: offset)
         .animation(.default, value: offset)
-        .animation(.default, value: isShowingTimerSettings)
-        .animation(.default, value: isShowingWhiteBalanceSettings)
+        .offset(y: offset)
         // Detect when the application goes to the background or becomes inactive and reset the offset
         .onChange(of: scenePhase) { newScenePhase in
             if newScenePhase == .background || newScenePhase == .inactive {
@@ -287,7 +290,6 @@ struct CameraControlsGrid: View {
             }
             .accessibilityLabel("Set timer to 30s.")
         }
-        .transition(.move(edge: .trailing))
     }
     
     // MARK: - White balance settings
@@ -354,7 +356,6 @@ struct CameraControlsGrid: View {
             }
             .accessibilityLabel("Set timer to 30s.")
         }
-        .transition(.move(edge: .trailing))
     }
     
     /// A button that brings up the settings modal view.
