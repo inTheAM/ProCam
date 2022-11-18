@@ -81,6 +81,8 @@ struct CameraControlsGrid: View {
                     // If the current offset is less than 20, offset the view up to 0
                     } else {
                         offset = 68
+                        isShowingWhiteBalanceSettings = false
+                        isShowingTimerSettings = false
                         HapticFeedback.play(.success)
                     }
                 }
@@ -347,7 +349,7 @@ struct CameraControlsGrid: View {
             } label: {
                 Image("Light")
                     .resizable()
-                    .frame(width: 32, height: 28)
+                    .frame(width: 28, height: 30)
                     .tint(.white)
             }
             .accessibilityLabel("Set timer to 30s.")
