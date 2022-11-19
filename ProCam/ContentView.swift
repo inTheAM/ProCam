@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isInAutofocus = true
+    @State private var isInManualfocus = false
     @State private var focusAmount = 0.0
     var body: some View {
         VStack(spacing: 0) {
@@ -38,7 +38,7 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     CameraControlsGrid()
-                        .padding(.bottom, isInAutofocus ? 208 : 232)
+                        .padding(.bottom, isInManualfocus ? 232 : 208)
                 }
                 
                 VStack(spacing: 0) {
@@ -46,7 +46,7 @@ struct ContentView: View {
                     Divider()
                    
                     VStack {
-                        if !isInAutofocus {
+                        if isInManualfocus {
                             
                             ZStack(alignment: .bottom) {
                                 VStack {
@@ -158,14 +158,14 @@ struct ContentView: View {
     var autoManualFocusButton: some View {
         Button {
             #warning("Toggle Auto/Manual Focus")
-            isInAutofocus.toggle()
+            isInManualfocus.toggle()
         } label: {
             Text("AF")
                 .font(.system(size: 12, weight: .light, design: .rounded))
                 .padding(8)
-                .foregroundColor(isInAutofocus ? .yellow : .gray)
+                .foregroundColor(isInManualfocus ? .yellow : .gray)
                 .background {
-                    CircleBackground(color: isInAutofocus ? .yellow : .gray)
+                    CircleBackground(color: isInManualfocus ? .yellow : .gray)
                 }
         }
         .padding([.horizontal])
