@@ -51,18 +51,18 @@ struct ContentView: View {
                             ZStack(alignment: .bottom) {
                                 VStack {
                                     HStack {
-                                        portraitModeButton
+                                        focusPeakingButton
                                         
                                         Spacer()
                                         
                                         portraitModeButton
-                                        portraitModeButton
+                                        focusLoupeButton
                                     }
                                     HStack {
                                         Spacer()
                                     }
                                     HStack {
-                                        autoManualFocusButton
+                                        macroModeButton
                                         Spacer()
                                         autoManualFocusButton
                                     }
@@ -74,6 +74,7 @@ struct ContentView: View {
                                     .zIndex(1)
                                 
                             }
+                            .padding(.horizontal, 8)
                         } else {
                             
                             HStack {
@@ -82,6 +83,7 @@ struct ContentView: View {
                             
                             // The Autofocus button and Portrait mode button
                             HStack {
+                                
                                 autoManualFocusButton
                                 
                                 Spacer(minLength: 0)
@@ -110,7 +112,8 @@ struct ContentView: View {
                             .background(Color.black)
                     }
                 }
-            }            
+            }
+            .animation(.default, value: isInManualfocus)
         }
         .ignoresSafeArea()
     }
@@ -161,15 +164,66 @@ struct ContentView: View {
             isInManualfocus.toggle()
         } label: {
             Text("AF")
-                .font(.system(size: 12, weight: .light, design: .rounded))
+                .font(.system(size: 14, weight: .light, design: .rounded))
                 .padding(8)
-                .foregroundColor(isInManualfocus ? .yellow : .gray)
+                .foregroundColor(isInManualfocus ? .white : .yellow)
                 .background {
-                    CircleBackground(color: isInManualfocus ? .yellow : .gray)
+                    CircleBackground(color: isInManualfocus ? .gray : .yellow)
                 }
         }
         .padding([.horizontal])
         .accessibilityLabel("Switch between autofocus and manual focus.")
+    }
+    
+    /// The button to toggle focus peaking on or off.
+    var focusPeakingButton: some View {
+        Button {
+            #warning("Toggle Focus Peaking")
+        } label: {
+            Image(systemName: "circle.dashed")
+                .font(.system(size: 14, weight: .light, design: .rounded))
+                .padding(8)
+                .foregroundColor(.white)
+                .background {
+                    CircleBackground(color: .gray)
+                }
+        }
+        .padding([.horizontal])
+        .accessibilityLabel("Turn on focus peaking.")
+    }
+    
+    /// The button to toggle focus peaking on or off.
+    var macroModeButton: some View {
+        Button {
+            #warning("Toggle Macro Mode")
+        } label: {
+            Image(systemName: "camera.macro")
+                .font(.system(size: 14, weight: .light, design: .rounded))
+                .padding(8)
+                .foregroundColor(.white)
+                .background {
+                    CircleBackground(color: .gray)
+                }
+        }
+        .padding([.horizontal])
+        .accessibilityLabel("Turn on macro mode.")
+    }
+    
+    /// The button to toggle focus peaking on or off.
+    var focusLoupeButton: some View {
+        Button {
+            #warning("Toggle focus loupe")
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 14, weight: .light, design: .rounded))
+                .padding(8)
+                .foregroundColor(.white)
+                .background {
+                    CircleBackground(color: .gray)
+                }
+        }
+        .padding([.horizontal])
+        .accessibilityLabel("Turn on focus loupe.")
     }
     
     /// The button to turn on or off Portrait Mode.
@@ -182,7 +236,7 @@ struct ContentView: View {
                 .resizedToFit()
                 .frame(width: 16, height: 16)
                 .padding(8)
-                .foregroundColor(.gray)
+                .foregroundColor(.white)
                 .background {
                     CircleBackground(color: .gray)
                 }
