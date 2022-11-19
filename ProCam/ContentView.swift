@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isInAutofocus = true
+    @State private var focusAmount = 0.0
     var body: some View {
         VStack(spacing: 0) {
             // The histogram view and button to toggle between auto/manual modes.
@@ -30,30 +32,64 @@ struct ContentView: View {
                         }
                     Rectangle()
                         .foregroundColor(.black)
-                        .frame(height: 274)
+                        .frame(height: 272)
                 }
                 
                 VStack {
                     Spacer()
                     CameraControlsGrid()
-                        .padding(.bottom, 212)
+                        .padding(.bottom, isInAutofocus ? 208 : 232)
                 }
                 
                 VStack(spacing: 0) {
                     Spacer()
                     Divider()
+                   
                     VStack {
-                        
-                        // The Autofocus button and Portrait mode button
-                        HStack {
-                            autoManualFocusButton
+                        if !isInAutofocus {
                             
-                            Spacer(minLength: 0)
+                            ZStack(alignment: .bottom) {
+                                VStack {
+                                    HStack {
+                                        portraitModeButton
+                                        
+                                        Spacer()
+                                        
+                                        portraitModeButton
+                                        portraitModeButton
+                                    }
+                                    HStack {
+                                        Spacer()
+                                    }
+                                    HStack {
+                                        autoManualFocusButton
+                                        Spacer()
+                                        autoManualFocusButton
+                                    }
+                                }
+                                .padding(.bottom, 10)
+                                .zIndex(2)
+                                
+                                SegmentedSlider(value: $focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
+                                    .zIndex(1)
+                                
+                            }
+                        } else {
                             
-                            portraitModeButton
+                            HStack {
+                                Spacer()
+                            }
+                            
+                            // The Autofocus button and Portrait mode button
+                            HStack {
+                                autoManualFocusButton
+                                
+                                Spacer(minLength: 0)
+                                
+                                portraitModeButton
+                            }
+                            .padding([.horizontal, .top], 8)
                         }
-                        .padding([.horizontal, .top], 8)
-                        
                         // The last image in the user's library,
                         // capture button and
                         // button for switching between the different rear cameras.
@@ -122,16 +158,17 @@ struct ContentView: View {
     var autoManualFocusButton: some View {
         Button {
             #warning("Toggle Auto/Manual Focus")
+            isInAutofocus.toggle()
         } label: {
             Text("AF")
-                .font(.system(size: 16, weight: .light, design: .rounded))
-                .padding(10)
-                .foregroundColor(.yellow)
+                .font(.system(size: 12, weight: .light, design: .rounded))
+                .padding(8)
+                .foregroundColor(isInAutofocus ? .yellow : .gray)
                 .background {
-                    CircleBackground(color: .yellow)
+                    CircleBackground(color: isInAutofocus ? .yellow : .gray)
                 }
         }
-        .padding()
+        .padding([.horizontal])
         .accessibilityLabel("Switch between autofocus and manual focus.")
     }
     
@@ -143,14 +180,14 @@ struct ContentView: View {
             Image("PortraitMode")
                 .renderingMode(.template)
                 .resizedToFit()
-                .frame(width: 20, height: 20)
-                .padding(10)
+                .frame(width: 16, height: 16)
+                .padding(8)
                 .foregroundColor(.gray)
                 .background {
                     CircleBackground(color: .gray)
                 }
         }
-        .padding()
+        .padding([.horizontal, .vertical])
         .accessibilityLabel("Activate portrait mode.")
     }
     
