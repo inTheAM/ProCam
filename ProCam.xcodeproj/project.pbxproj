@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB44DB872928E20700632EBA /* ScrollViewOffset.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB862928E20700632EBA /* ScrollViewOffset.swift */; };
+		DB44DB892928E23600632EBA /* SegmentedSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB882928E23600632EBA /* SegmentedSlider.swift */; };
+		DB44DB8B2928F87900632EBA /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB8A2928F87900632EBA /* Double.swift */; };
 		DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */; };
 		DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DD2924EB0600C64A14 /* ContentView.swift */; };
 		DB65E8E02924EB0600C64A14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB65E8DF2924EB0600C64A14 /* Assets.xcassets */; };
@@ -18,6 +21,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DB44DB862928E20700632EBA /* ScrollViewOffset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffset.swift; sourceTree = "<group>"; };
+		DB44DB882928E23600632EBA /* SegmentedSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedSlider.swift; sourceTree = "<group>"; };
+		DB44DB8A2928F87900632EBA /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		DB65E8D82924EB0600C64A14 /* ProCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProCamApp.swift; sourceTree = "<group>"; };
 		DB65E8DD2924EB0600C64A14 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +88,8 @@
 			isa = PBXGroup;
 			children = (
 				DB65E8ED2925241F00C64A14 /* CircleBackground.swift */,
+				DB44DB862928E20700632EBA /* ScrollViewOffset.swift */,
+				DB44DB882928E23600632EBA /* SegmentedSlider.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -91,6 +99,7 @@
 			children = (
 				DB65E8F02925272400C64A14 /* Image.swift */,
 				DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */,
+				DB44DB8A2928F87900632EBA /* Double.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -171,6 +180,9 @@
 				DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */,
 				DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */,
 				DB65E8F529275BAD00C64A14 /* HapticFeedback.swift in Sources */,
+				DB44DB872928E20700632EBA /* ScrollViewOffset.swift in Sources */,
+				DB44DB8B2928F87900632EBA /* Double.swift in Sources */,
+				DB44DB892928E23600632EBA /* SegmentedSlider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
