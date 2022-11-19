@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Namespace private var namespace
     @State private var isInManualfocus = false
     @State private var focusAmount = 0.0
     var body: some View {
@@ -56,6 +57,7 @@ struct ContentView: View {
                                         Spacer()
                                         
                                         portraitModeButton
+                                            .matchedGeometryEffect(id: "portraitmode", in: namespace)
                                         focusLoupeButton
                                     }
                                     HStack {
@@ -65,6 +67,7 @@ struct ContentView: View {
                                         macroModeButton
                                         Spacer()
                                         autoManualFocusButton
+                                            .matchedGeometryEffect(id: "automanualfocus", in: namespace)
                                     }
                                 }
                                 .padding(.bottom, 10)
@@ -85,10 +88,12 @@ struct ContentView: View {
                             HStack {
                                 
                                 autoManualFocusButton
+                                    .matchedGeometryEffect(id: "automanualfocus", in: namespace)
                                 
                                 Spacer(minLength: 0)
                                 
                                 portraitModeButton
+                                    .matchedGeometryEffect(id: "portraitmode", in: namespace)
                             }
                             .padding([.horizontal, .top], 8)
                         }
