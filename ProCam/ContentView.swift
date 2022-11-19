@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Namespace private var namespace
     @State private var isInManualfocus = false
-    @State private var focusAmount = 0.0
+    @State private var isShowingAutoManualSelection = false
+    @State private var focusAmount = 34.0
     var body: some View {
         VStack(spacing: 0) {
             // The histogram view and button to toggle between auto/manual modes.
@@ -31,11 +32,30 @@ struct ContentView: View {
                         .overlay {
                             balanceIndicator
                         }
+                        .overlay(alignment: .trailing) {
+                            if isShowingAutoManualSelection {
+                                VStack(alignment: .trailing) {
+                                    VStack {
+                                        autoButton
+                                        manualButton
+                                    }
+                                    .background(Color.black.opacity(0.5).cornerRadius(32))
+                                    
+                                    zebrasButton
+                                    .background(Color.black.opacity(0.5).cornerRadius(32))
+                                    .padding(.vertical)
+                                }
+                                .padding(8)
+                                .zIndex(1)
+                                .transition(.move(edge: .trailing))
+                            }
+                        }
+                        .animation(.default, value: isShowingAutoManualSelection)
+                    
                     Rectangle()
                         .foregroundColor(.black)
                         .frame(height: 272)
                 }
-                
                 VStack {
                     Spacer()
                     CameraControlsGrid()
@@ -134,6 +154,7 @@ struct ContentView: View {
     var autoManualModeButton: some View {
         Button {
             #warning("Toggle Auto/Manual mode")
+            isShowingAutoManualSelection.toggle()
         } label: {
             Image("AFTriangle")
                 .renderingMode(.template)
@@ -143,6 +164,63 @@ struct ContentView: View {
         }
         .padding(.trailing)
         .accessibilityLabel("Show menu to switch between auto and manual modes.")
+    }
+    
+    var autoButton: some View {
+        Button {
+            #warning("Toggle auto mode")
+        } label: {
+            VStack {
+                Image("AFTriangle")
+                    .renderingMode(.template)
+                    .resizable()
+                    .padding()
+                    .background(CircleBackground(color: .yellow))
+                    .frame(width: 64, height: 64)
+                Text("AUTO")
+            }
+            .tint(.yellow)
+        }
+        .padding()
+        .accessibilityLabel("Swith to Auto mode.")
+    }
+    
+    var manualButton: some View {
+        Button {
+            #warning("Toggle manual mode")
+        } label: {
+            VStack {
+                Text("M")
+                    .font(.largeTitle)
+                    .padding()
+                    .background(CircleBackground(color: .gray))
+                    .frame(width: 64, height: 64)
+                Text("MANUAL")
+                
+            }
+            .foregroundColor(.white)
+        }
+        .padding()
+        .accessibilityLabel("Swith to Manual mode.")
+    }
+    
+    var zebrasButton: some View {
+        Button {
+            #warning("Toggle zebras")
+        } label: {
+            VStack {
+                Image(systemName: "line.3.horizontal.circle")
+                    .font(.system(size: 48, weight: .light))
+                    .rotationEffect(.init(degrees: -50))
+                    .padding(2)
+                    .background(CircleBackground(color: .white))
+                    .frame(width: 64, height: 64)
+                Text("ZEBRAS")
+                
+            }
+            .foregroundColor(.white)
+        }
+        .padding(18)
     }
     
     #warning("Show camera preview")
