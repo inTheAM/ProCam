@@ -199,10 +199,10 @@ struct CameraControlsGrid: View {
             #warning("Switch between HEIC and RAW formats")
         } label: {
             Text("HEIC")
-                .font(.caption2)
+                .font(.system(size: 8, weight: .light))
                 .fixedSize()
                 .foregroundColor(.white)
-                .padding(5)
+                .padding(4)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
                         .stroke(lineWidth: 2)
@@ -300,6 +300,7 @@ struct CameraControlsGrid: View {
             isShowingWhiteBalanceSettings = true
         } label: {
             Text("AWB")
+                .font(.caption)
                 .fixedSize()
                 .foregroundColor(.white)
         }
