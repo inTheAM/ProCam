@@ -18,6 +18,7 @@ struct SegmentedSlider: View {
     }
     @State private var minX = 0.0
     @State private var hapticEngine: CHHapticEngine?
+    @EnvironmentObject var hapticFeedback: HapticFeedback
     
     func opacity(index: Int) -> Double {
         if range[index] <= value {
@@ -51,7 +52,7 @@ struct SegmentedSlider: View {
                         .frame(width: 3)
                         .onChange(of: value.roundedTo(places: 2)) { newValue in
                             if newValue == range[index].roundedTo(places: 2) {
-                                playTick(index: index)
+                                hapticFeedback.playTick(isEmphasized: isSignificant(index: index))
                             }
                         }
                         .opacity(opacity(index: index))
@@ -89,9 +90,6 @@ struct SegmentedSlider: View {
             }
         }
         .frame(height: 30, alignment: .bottom)
-        .onAppear {
-            prepareHaptics()
-        }
         
     }
     func isSignificant(index: Int) -> Bool {
@@ -99,37 +97,6 @@ struct SegmentedSlider: View {
             return true
         } else  {
             return index%5==0
-        }
-    }
-    func prepareHaptics() {
-        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
-
-        do {
-            hapticEngine = try CHHapticEngine()
-            try hapticEngine?.start()
-        } catch {
-            print("There was an error creating the engine: \(error.localizedDescription)")
-        }
-    }
-    
-    func playTick(index: Int) {
-        // make sure that the device supports haptics
-        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
-        var events = [CHHapticEvent]()
-
-        // create one intense, sharp tap
-        let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: isSignificant(index: index) ? 0.6 : 0.4)
-        let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 1)
-        let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensity, sharpness], relativeTime: 0)
-        events.append(event)
-
-        // convert those events into a pattern and play it immediately
-        do {
-            let pattern = try CHHapticPattern(events: events, parameters: [])
-            let player = try hapticEngine?.makePlayer(with: pattern)
-            try player?.start(atTime: 0)
-        } catch {
-            print("Failed to play pattern: \(error.localizedDescription).")
         }
     }
 }

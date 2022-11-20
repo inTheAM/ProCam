@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct ProCamApp: App {
+    @StateObject private var hapticFeedback = HapticFeedback.shared
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(hapticFeedback)
                 .preferredColorScheme(.dark)
                 .statusBarHidden()
         }

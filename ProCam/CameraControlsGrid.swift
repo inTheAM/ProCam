@@ -18,6 +18,8 @@ struct CameraControlsGrid: View {
     /// Detects when the state of the application changes eg when the user moves it to the background, the app becomes inactive or the user switches back to the app.
     @Environment(\.scenePhase) var scenePhase
     
+    @EnvironmentObject var hapticFeedback: HapticFeedback
+    
     @State private var isShowingTimerSettings = false
     
     @State private var isShowingWhiteBalanceSettings = false
@@ -82,13 +84,13 @@ struct CameraControlsGrid: View {
                     // If the current offset is above 20, offset the view down to 68
                     if offset < 20 {
                         offset = 0
-                        HapticFeedback.play(.success)
+                        hapticFeedback.playTick(isEmphasized: true)
                         // If the current offset is less than 20, offset the view up to 0
                     } else {
                         offset = 68
                         isShowingWhiteBalanceSettings = false
                         isShowingTimerSettings = false
-                        HapticFeedback.play(.success)
+                        hapticFeedback.playTick(isEmphasized: true)
                     }
                 }
         )
