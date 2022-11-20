@@ -7,18 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB44DB872928E20700632EBA /* ScrollViewOffset.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB862928E20700632EBA /* ScrollViewOffset.swift */; };
+		DB44DB892928E23600632EBA /* SegmentedSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB882928E23600632EBA /* SegmentedSlider.swift */; };
+		DB44DB8B2928F87900632EBA /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB8A2928F87900632EBA /* Double.swift */; };
 		DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */; };
 		DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DD2924EB0600C64A14 /* ContentView.swift */; };
 		DB65E8E02924EB0600C64A14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB65E8DF2924EB0600C64A14 /* Assets.xcassets */; };
 		DB65E8E32924EB0600C64A14 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB65E8E22924EB0600C64A14 /* Preview Assets.xcassets */; };
+		DB65E8EE2925241F00C64A14 /* CircleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8ED2925241F00C64A14 /* CircleBackground.swift */; };
+		DB65E8F12925272400C64A14 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F02925272400C64A14 /* Image.swift */; };
+		DB65E8F32925343100C64A14 /* CameraControlsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F22925343100C64A14 /* CameraControlsGrid.swift */; };
+		DB65E8F529275BAD00C64A14 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DB44DB862928E20700632EBA /* ScrollViewOffset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffset.swift; sourceTree = "<group>"; };
+		DB44DB882928E23600632EBA /* SegmentedSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedSlider.swift; sourceTree = "<group>"; };
+		DB44DB8A2928F87900632EBA /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		DB65E8D82924EB0600C64A14 /* ProCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProCamApp.swift; sourceTree = "<group>"; };
 		DB65E8DD2924EB0600C64A14 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DB65E8DF2924EB0600C64A14 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB65E8E22924EB0600C64A14 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		DB65E8ED2925241F00C64A14 /* CircleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleBackground.swift; sourceTree = "<group>"; };
+		DB65E8F02925272400C64A14 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		DB65E8F22925343100C64A14 /* CameraControlsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraControlsGrid.swift; sourceTree = "<group>"; };
+		DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +66,10 @@
 			isa = PBXGroup;
 			children = (
 				DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */,
+				DB65E8EF292526D000C64A14 /* Extensions */,
+				DB65E8EC2925240700C64A14 /* Components */,
 				DB65E8DD2924EB0600C64A14 /* ContentView.swift */,
+				DB65E8F22925343100C64A14 /* CameraControlsGrid.swift */,
 				DB65E8DF2924EB0600C64A14 /* Assets.xcassets */,
 				DB65E8E12924EB0600C64A14 /* Preview Content */,
 			);
@@ -65,6 +82,26 @@
 				DB65E8E22924EB0600C64A14 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DB65E8EC2925240700C64A14 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				DB65E8ED2925241F00C64A14 /* CircleBackground.swift */,
+				DB44DB862928E20700632EBA /* ScrollViewOffset.swift */,
+				DB44DB882928E23600632EBA /* SegmentedSlider.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		DB65E8EF292526D000C64A14 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DB65E8F02925272400C64A14 /* Image.swift */,
+				DB65E8F429275BAD00C64A14 /* HapticFeedback.swift */,
+				DB44DB8A2928F87900632EBA /* Double.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +174,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB65E8EE2925241F00C64A14 /* CircleBackground.swift in Sources */,
+				DB65E8F12925272400C64A14 /* Image.swift in Sources */,
+				DB65E8F32925343100C64A14 /* CameraControlsGrid.swift in Sources */,
 				DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */,
 				DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */,
+				DB65E8F529275BAD00C64A14 /* HapticFeedback.swift in Sources */,
+				DB44DB872928E20700632EBA /* ScrollViewOffset.swift in Sources */,
+				DB44DB8B2928F87900632EBA /* Double.swift in Sources */,
+				DB44DB892928E23600632EBA /* SegmentedSlider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
