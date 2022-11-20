@@ -10,6 +10,7 @@
 		DB44DB872928E20700632EBA /* ScrollViewOffset.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB862928E20700632EBA /* ScrollViewOffset.swift */; };
 		DB44DB892928E23600632EBA /* SegmentedSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB882928E23600632EBA /* SegmentedSlider.swift */; };
 		DB44DB8B2928F87900632EBA /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB44DB8A2928F87900632EBA /* Double.swift */; };
+		DB4E021F292A274B00C26DF9 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4E021E292A274B00C26DF9 /* CameraService.swift */; };
 		DB65E8DC2924EB0600C64A14 /* ProCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */; };
 		DB65E8DE2924EB0600C64A14 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB65E8DD2924EB0600C64A14 /* ContentView.swift */; };
 		DB65E8E02924EB0600C64A14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB65E8DF2924EB0600C64A14 /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 		DB44DB862928E20700632EBA /* ScrollViewOffset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffset.swift; sourceTree = "<group>"; };
 		DB44DB882928E23600632EBA /* SegmentedSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedSlider.swift; sourceTree = "<group>"; };
 		DB44DB8A2928F87900632EBA /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		DB4E021E292A274B00C26DF9 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
 		DB65E8D82924EB0600C64A14 /* ProCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProCamApp.swift; sourceTree = "<group>"; };
 		DB65E8DD2924EB0600C64A14 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,6 +48,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB4E0220292A70FE00C26DF9 /* CameraService */ = {
+			isa = PBXGroup;
+			children = (
+				DB4E021E292A274B00C26DF9 /* CameraService.swift */,
+			);
+			path = CameraService;
+			sourceTree = "<group>";
+		};
 		DB65E8CF2924EB0600C64A14 = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				DB65E8DB2924EB0600C64A14 /* ProCamApp.swift */,
+				DB4E0220292A70FE00C26DF9 /* CameraService */,
 				DB65E8EF292526D000C64A14 /* Extensions */,
 				DB65E8EC2925240700C64A14 /* Components */,
 				DB65E8DD2924EB0600C64A14 /* ContentView.swift */,
@@ -174,6 +185,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB4E021F292A274B00C26DF9 /* CameraService.swift in Sources */,
 				DB65E8EE2925241F00C64A14 /* CircleBackground.swift in Sources */,
 				DB65E8F12925272400C64A14 /* Image.swift in Sources */,
 				DB65E8F32925343100C64A14 /* CameraControlsGrid.swift in Sources */,
