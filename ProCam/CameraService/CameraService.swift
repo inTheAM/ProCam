@@ -170,16 +170,21 @@ extension CameraService {
         
         isCaptureSessionConfigured = true
         
-        // Defer block runs here.
+        // Deferred block runs here.
     }
     
+    /// Checks for authorization to use the device's camera.
+    /// - Returns: A boolean inidcating whether the app is authorized to access the camera.
     private func isAuthorized() async -> Bool {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             return true
         case .notDetermined:
+            // Suspend the session queue
             sessionQueue.suspend()
+            // Request authorization
             let isAuthorized = await AVCaptureDevice.requestAccess(for: .video)
+            // Resume the session queue
             sessionQueue.resume()
             return isAuthorized
         case .denied:
@@ -191,28 +196,36 @@ extension CameraService {
         }
     }
     
+    /// Updates the capture session for a capture device.
+    /// Removes existing device inputs from the session and adds a new one for the given device.
+    /// - Parameter captureDevice: The capture device to update the session with.
     private func updateSessionForCaptureDevice(_ captureDevice: AVCaptureDevice) {
+        // Check if the session has been configured.
         guard isCaptureSessionConfigured
         else { return }
         
+        // Begin configuration and commit at the end of the following code.
         captureSession.beginConfiguration()
         defer { captureSession.commitConfiguration() }
 
+        // Remove device inputs from the session.
         for input in captureSession.inputs {
             if let deviceInput = input as? AVCaptureDeviceInput {
                 captureSession.removeInput(deviceInput)
             }
         }
-        
+        // Add a device input for the new capture device.
         if let deviceInput = try? AVCaptureDeviceInput(device: captureDevice) {
             if !captureSession.inputs.contains(deviceInput), captureSession.canAddInput(deviceInput) {
                 captureSession.addInput(deviceInput)
             }
         }
         
+        // Update the video output connection to mirror output if using front camera.
         updateVideoOutputConnection()
     }
     
+    /// Sets the video mirroring property for front camera use.
     private func updateVideoOutputConnection() {
         if let videoOutputConnection = videoOutput.connection(with: .video) {
             if videoOutputConnection.isVideoMirroringSupported {
@@ -221,23 +234,34 @@ extension CameraService {
         }
     }
     
+    /// Captures a photo
     func capturePhoto() {
         sessionQueue.async { [ weak self] in
             guard let self  else { return }
+            
+            // Settings to use for the capture request.
             var photoSettings = AVCapturePhotoSettings()
 
+            // Set the codec
             if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
                 photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
             }
             
+            // Check for flash functionality
             let isFlashAvailable = self.deviceInput?.device.isFlashAvailable ?? false
             photoSettings.flashMode = isFlashAvailable ? .auto : .off
+            
             photoSettings.isHighResolutionPhotoEnabled = true
+            
+            // Set the pixel format
             if let previewPhotoPixelFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
                 photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: previewPhotoPixelFormatType]
             }
+            
+            // Prioritize quality for capture
             photoSettings.photoQualityPrioritization = .quality
             
+            // Set the orientation of the video connection for capture
             if let photoOutputVideoConnection = self.photoOutput.connection(with: .video) {
                 if photoOutputVideoConnection.isVideoOrientationSupported,
                     let videoOrientation = self.videoOrientationFor(self.deviceOrientation) {
@@ -245,10 +269,12 @@ extension CameraService {
                 }
             }
             
+            // Capture and notify the delegate
             self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
         }
     }
     
+    /// Starts the capture session.
     func start() async {
         let authorized = await isAuthorized()
         guard authorized else {
@@ -274,6 +300,7 @@ extension CameraService {
         }
     }
     
+    /// Ends the capture session.
     func stop() {
         guard isCaptureSessionConfigured else { return }
         
@@ -284,13 +311,21 @@ extension CameraService {
         }
     }
     
+    /// Maps a device orientation to an `AVCaptureVideoOrientation`
+    /// - Parameter deviceOrientation: The device orientation to map into an `AVCaptureVideoOrientation`
+    /// - Returns: An `AVCaptureVideoOrientation` matching the given device orientation,
     private func videoOrientationFor(_ deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation? {
         switch deviceOrientation {
-        case .portrait: return AVCaptureVideoOrientation.portrait
-        case .portraitUpsideDown: return AVCaptureVideoOrientation.portraitUpsideDown
-        case .landscapeLeft: return AVCaptureVideoOrientation.landscapeRight
-        case .landscapeRight: return AVCaptureVideoOrientation.landscapeLeft
-        default: return nil
+        case .portrait:
+            return AVCaptureVideoOrientation.portrait
+        case .portraitUpsideDown:
+            return AVCaptureVideoOrientation.portraitUpsideDown
+        case .landscapeLeft:
+            return AVCaptureVideoOrientation.landscapeRight
+        case .landscapeRight:
+            return AVCaptureVideoOrientation.landscapeLeft
+        default:
+            return nil
         }
     }
 }
@@ -298,19 +333,21 @@ extension CameraService {
 
 extension CameraService: AVCapturePhotoCaptureDelegate {
     
+    /// Delegate method to handle photo capture.
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
         if let error = error {
             print("Error capturing photo: \(error.localizedDescription)")
             return
         }
-        
+        // Send captured photo to the photo stream
         addToPhotoStream?(photo)
     }
 }
 
 
 extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
+    /// The current device orientation.
     private var deviceOrientation: UIDeviceOrientation {
         var orientation = UIDevice.current.orientation
         if orientation == UIDeviceOrientation.unknown {
@@ -318,19 +355,24 @@ extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
         }
         return orientation
     }
+    
+    /// Delegate method to handle capture output.
     func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
         from connection: AVCaptureConnection
     ) {
+        // Get the pixel buffer
         guard let pixelBuffer = sampleBuffer.imageBuffer
         else { return }
         
+        // Set the video orientation for the current device orientation
         if connection.isVideoOrientationSupported,
            let videoOrientation = videoOrientationFor(deviceOrientation) {
             connection.videoOrientation = videoOrientation
         }
 
+        // Add the frame to the preview stream
         addToPreviewStream?(CIImage(cvPixelBuffer: pixelBuffer))
     }
 }
