@@ -360,12 +360,20 @@ extension ContentView {
 #warning("Show last image in library")
     /// The preview of the last image in the user's photo library.
     var lastImageInLibrary: some View {
-        Rectangle()
-            .aspectRatio(contentMode: .fit)
-            .cornerRadius(8)
-            .frame(width: 96, height: 96)
-            .padding(.horizontal, 8)
-            .accessibilityLabel("Show last photo taken.")
+        Group {
+            if let thumbnail = camera.thumbnailImage {
+                thumbnail
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Spacer()
+            }
+        }
+        .frame(width: 96, height: 96)
+        .clipped()
+        .cornerRadius(8)
+        .padding(.horizontal, 8)
+        .accessibilityLabel("Show last photo taken.")
     }
     
     /// The button to capture the photo.
