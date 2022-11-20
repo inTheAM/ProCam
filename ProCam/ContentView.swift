@@ -168,6 +168,7 @@ struct ContentView: View {
         .accessibilityLabel("Show menu to switch between auto and manual modes.")
     }
     
+    /// The button to toggle auto mode.
     var autoButton: some View {
         Button {
             #warning("Toggle auto mode")
@@ -185,9 +186,10 @@ struct ContentView: View {
             .tint(.yellow)
         }
         .padding()
-        .accessibilityLabel("Swith to Auto mode.")
+        .accessibilityLabel("Switch to Auto mode.")
     }
     
+    /// The button to toggle manual mode.
     var manualButton: some View {
         Button {
             #warning("Toggle manual mode")
@@ -205,9 +207,10 @@ struct ContentView: View {
             .foregroundColor(.white)
         }
         .padding()
-        .accessibilityLabel("Swith to Manual mode.")
+        .accessibilityLabel("Switch to manual mode.")
     }
     
+    /// The button to toggle showing zebras overlay
     var zebrasButton: some View {
         Button {
             #warning("Toggle zebras")
@@ -229,6 +232,7 @@ struct ContentView: View {
             .foregroundColor(.white)
         }
         .padding(18)
+        .accessibilityLabel("Show zebras.")
     }
     
     #warning("Show camera preview")
