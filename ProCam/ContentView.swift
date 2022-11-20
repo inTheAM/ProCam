@@ -39,13 +39,15 @@ struct ContentView: View {
                                         autoButton
                                         manualButton
                                     }
-                                    .background(Color.black.opacity(0.5).cornerRadius(32))
+                                    .background(Color.black.opacity(0.5).cornerRadius(28))
                                     
                                     zebrasButton
-                                    .background(Color.black.opacity(0.5).cornerRadius(32))
+                                    .background(Color.black.opacity(0.5).cornerRadius(28))
                                     .padding(.vertical)
+                                    Spacer()
                                 }
                                 .padding(8)
+                                .padding(.top)
                                 .zIndex(1)
                                 .transition(.move(edge: .trailing))
                             }
@@ -174,10 +176,11 @@ struct ContentView: View {
                 Image("AFTriangle")
                     .renderingMode(.template)
                     .resizable()
-                    .padding()
-                    .background(CircleBackground(color: .yellow))
-                    .frame(width: 64, height: 64)
+                    .padding(12)
+                    .background(Circle().stroke(lineWidth: 2))
+                    .frame(width: 44, height: 44)
                 Text("AUTO")
+                    .font(.system(size: 14))
             }
             .tint(.yellow)
         }
@@ -191,11 +194,12 @@ struct ContentView: View {
         } label: {
             VStack {
                 Text("M")
-                    .font(.largeTitle)
+                    .font(.title3.monospaced())
                     .padding()
-                    .background(CircleBackground(color: .gray))
-                    .frame(width: 64, height: 64)
+                    .background(Circle().stroke(lineWidth: 2).foregroundColor(.gray))
+                    .frame(width: 56, height: 56)
                 Text("MANUAL")
+                    .font(.system(size: 14))
                 
             }
             .foregroundColor(.white)
@@ -210,13 +214,17 @@ struct ContentView: View {
         } label: {
             VStack {
                 Image(systemName: "line.3.horizontal.circle")
-                    .font(.system(size: 48, weight: .light))
+                    .font(.system(size: 24, weight: .light))
                     .rotationEffect(.init(degrees: -50))
-                    .padding(2)
-                    .background(CircleBackground(color: .white))
-                    .frame(width: 64, height: 64)
+                    .scaleEffect(2)
+                    .clipShape(Circle())
+                    .padding(4)
+                    .background(Circle().stroke(lineWidth: 2))
+                    .padding(4)
+                    .background(Circle().stroke(lineWidth: 2))
+                    .frame(width: 48, height: 48)
                 Text("ZEBRAS")
-                
+                    .font(.system(size: 14))
             }
             .foregroundColor(.white)
         }
