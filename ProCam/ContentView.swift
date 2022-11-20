@@ -372,6 +372,7 @@ extension ContentView {
     var capturePhotoButton: some View {
         Button {
             #warning("Capture photo")
+            camera.capture()
         } label: {
             LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
                 .clipShape(Circle())

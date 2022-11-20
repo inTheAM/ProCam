@@ -32,4 +32,7 @@ final class Camera: ObservableObject {
         await service.start()
     }
     
+    func capture() {
+        service.capturePhoto()
+    }
 }
