@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     @Namespace private var namespace
+    @StateObject private var camera = Camera()
     @State private var isInManualfocus = false
     @State private var isShowingAutoManualSelection = false
-    @State private var focusAmount = 34.0
+    @State private var focusAmount = 0.0
     var body: some View {
         VStack(spacing: 0) {
             // The histogram view and button to toggle between auto/manual modes.
@@ -28,7 +29,7 @@ struct ContentView: View {
             // with the controls overlaid in a `ZStack`.
             ZStack(alignment: .bottom) {
                 VStack {
-                    cameraPreview
+                    CameraPreview()
                         .overlay {
                             balanceIndicator
                         }
@@ -143,10 +144,29 @@ struct ContentView: View {
             .animation(.default, value: isInManualfocus)
         }
         .ignoresSafeArea()
+        .environmentObject(camera)
+        .task {
+            await camera.start()
+        }
     }
 }
 
 extension ContentView {
+#warning("Show camera preview")
+    /// The preview of what the camera sees.
+    struct CameraPreview: View {
+        @EnvironmentObject var camera: Camera
+        var body: some View {
+            if let image = camera.preview {
+                image
+                    .scaledToFit()
+                    .accessibilityLabel("Camera preview.")
+            } else {
+                Rectangle()
+                    .foregroundColor(.cyan.opacity(0.2))
+            }
+        }
+    }
     
     #warning("Show histogram")
     /// The histogram view.
@@ -238,13 +258,7 @@ extension ContentView {
         .accessibilityLabel("Show zebras.")
     }
     
-    #warning("Show camera preview")
-    /// The preview of what the camera sees.
-    var cameraPreview: some View {
-        Rectangle()
-            .foregroundColor(.cyan.opacity(0.2))
-            .accessibilityLabel("Camera preview.")
-    }
+    
     
     /// The indicator for device position, either horizontal or vertical.
     var balanceIndicator: some View {
@@ -358,6 +372,7 @@ extension ContentView {
     var capturePhotoButton: some View {
         Button {
             #warning("Capture photo")
+            camera.capture()
         } label: {
             LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
                 .clipShape(Circle())
