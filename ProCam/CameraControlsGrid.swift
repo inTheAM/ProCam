@@ -65,7 +65,7 @@ struct CameraControlsGrid: View {
             // Declare a drag gesture with a minimum distance.
             // A minimum distance of 0 means taps will also be recognized.
             DragGesture(minimumDistance: 10)
-                // When the user drags on the screen, the changes are received here.
+            // When the user drags on the screen, the changes are received here.
                 .onChanged { value in
                     // The distance the drag gesture has covered thus far
                     let distance = value.translation.height * 0.5
@@ -77,13 +77,13 @@ struct CameraControlsGrid: View {
                     offset = allowedDistance
                     
                 }
-                // When the drag gesture is over, we receive data about the entire drag here.
+            // When the drag gesture is over, we receive data about the entire drag here.
                 .onEnded { value in
                     // If the current offset is above 20, offset the view down to 68
                     if offset < 20 {
                         offset = 0
                         HapticFeedback.play(.success)
-                    // If the current offset is less than 20, offset the view up to 0
+                        // If the current offset is less than 20, offset the view up to 0
                     } else {
                         offset = 68
                         isShowingWhiteBalanceSettings = false
@@ -101,6 +101,9 @@ struct CameraControlsGrid: View {
             }
         }
     }
+}
+
+extension CameraControlsGrid {
     
     // MARK: - Drag Indicator
     

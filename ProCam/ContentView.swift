@@ -42,8 +42,8 @@ struct ContentView: View {
                                     .background(Color.black.opacity(0.5).cornerRadius(28))
                                     
                                     zebrasButton
-                                    .background(Color.black.opacity(0.5).cornerRadius(28))
-                                    .padding(.vertical)
+                                        .background(Color.black.opacity(0.5).cornerRadius(28))
+                                        .padding(.vertical)
                                     Spacer()
                                 }
                                 .padding(8)
@@ -67,7 +67,7 @@ struct ContentView: View {
                 VStack(spacing: 0) {
                     Spacer()
                     Divider()
-                   
+                    
                     VStack {
                         if isInManualfocus {
                             
@@ -144,6 +144,9 @@ struct ContentView: View {
         }
         .ignoresSafeArea()
     }
+}
+
+extension ContentView {
     
     #warning("Show histogram")
     /// The histogram view.
