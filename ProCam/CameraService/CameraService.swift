@@ -75,6 +75,9 @@ final class CameraService: NSObject {
     /// A method to add input frames to the preview stream for previewing.
     private var addToPreviewStream: ((CIImage) -> Void)?
     
+    /// A method to add captured photos to the user's library.
+    private var addToPhotoStream: ((AVCapturePhoto) -> Void)?
+    
     /// Tracks whether the preview is on or paused.
     var isPreviewPaused = false
     
@@ -89,8 +92,19 @@ final class CameraService: NSObject {
         }
     }()
     
+    /// The stream of photos captured.
+    lazy var photoStream: AsyncStream<AVCapturePhoto> = {
+        AsyncStream { continuation in
+            addToPhotoStream = { photo in
+                continuation.yield(photo)
+            }
+        }
+    }()
+    
+    /// The DispatchQueue for the capture session.
     private let sessionQueue = DispatchQueue(label: "ProCam.SessionQueue")
 
+    /// Initializes the capture device to the wide angle rear camera.
     override init() {
         super.init()
         captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera,
@@ -102,21 +116,35 @@ final class CameraService: NSObject {
 
 extension CameraService {
     
+    /// Configures the capture session, adding inputs and outputs for photos and video.
     func configureCaptureSession() throws {
+        // Begin configuration
         captureSession.beginConfiguration()
+        
+        // Use `defer` to run code at the end of the function.
+        // If configuration proceeds without errors, then commit.
         defer {
             captureSession.commitConfiguration()
         }
+        
+        // Check for a capture device
         guard let captureDevice = captureDevice
         else { return }
+        
+        // Check the input for the device.
         let deviceInput = try AVCaptureDeviceInput(device: captureDevice)
+        
+        // Create the photo output.
         let photoOutput = AVCapturePhotoOutput()
-                        
+        // Set the capture session preset to `photo` which allows for hi res photo capture.
         captureSession.sessionPreset = AVCaptureSession.Preset.photo
 
+        // Create the video output
         let videoOutput = AVCaptureVideoDataOutput()
+        // Assign the video output delegate, which will handle the frames received from the capture device.
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "ProCam.VideoDataOutputQueue"))
   
+        // Check if the capture session can add inputs and outputs.
         guard captureSession.canAddInput(deviceInput)
         else { return }
         guard captureSession.canAddOutput(photoOutput)
@@ -124,10 +152,12 @@ extension CameraService {
         guard captureSession.canAddOutput(videoOutput)
         else { return }
         
+        // Add the device input, photo output and video output to the capture session.
         captureSession.addInput(deviceInput)
         captureSession.addOutput(photoOutput)
         captureSession.addOutput(videoOutput)
         
+        // Assign the inputs and outputs.
         self.deviceInput = deviceInput
         self.photoOutput = photoOutput
         self.videoOutput = videoOutput
@@ -135,9 +165,12 @@ extension CameraService {
         photoOutput.isHighResolutionCaptureEnabled = true
         photoOutput.maxPhotoQualityPrioritization = .quality
         
+        // Update the video output connection to mirror output if using front camera.
         updateVideoOutputConnection()
         
         isCaptureSessionConfigured = true
+        
+        // Defer block runs here.
     }
     
     private func isAuthorized() async -> Bool {
@@ -188,6 +221,34 @@ extension CameraService {
         }
     }
     
+    func capturePhoto() {
+        sessionQueue.async { [ weak self] in
+            guard let self  else { return }
+            var photoSettings = AVCapturePhotoSettings()
+
+            if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+                photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+            }
+            
+            let isFlashAvailable = self.deviceInput?.device.isFlashAvailable ?? false
+            photoSettings.flashMode = isFlashAvailable ? .auto : .off
+            photoSettings.isHighResolutionPhotoEnabled = true
+            if let previewPhotoPixelFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+                photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: previewPhotoPixelFormatType]
+            }
+            photoSettings.photoQualityPrioritization = .quality
+            
+            if let photoOutputVideoConnection = self.photoOutput.connection(with: .video) {
+                if photoOutputVideoConnection.isVideoOrientationSupported,
+                    let videoOrientation = self.videoOrientationFor(self.deviceOrientation) {
+                    photoOutputVideoConnection.videoOrientation = videoOrientation
+                }
+            }
+            
+            self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
+        }
+    }
+    
     func start() async {
         let authorized = await isAuthorized()
         guard authorized else {
@@ -233,6 +294,21 @@ extension CameraService {
         }
     }
 }
+
+
+extension CameraService: AVCapturePhotoCaptureDelegate {
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        
+        if let error = error {
+            print("Error capturing photo: \(error.localizedDescription)")
+            return
+        }
+        
+        addToPhotoStream?(photo)
+    }
+}
+
 
 extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
     private var deviceOrientation: UIDeviceOrientation {
