@@ -173,15 +173,15 @@ extension CameraControlsGrid {
     /// A button that toggles the visibility of the grid overlay on the camera preview.
     var gridOverlayButton: some View {
         Button {
-            #warning("Toggle grid visibility")
+            camera.toggleGrid()
         } label: {
             Image(systemName: "grid")
                 .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor((camera.isShowingGrid ? Color.yellow : .white).opacity(0.4))
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
-                        .foregroundColor(.white)
+                        .foregroundColor(camera.isShowingGrid ? .yellow : .white)
                 }
         }
         .accessibilityLabel("Show overlay grid.")

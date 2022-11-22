@@ -14,6 +14,7 @@ final class Camera: ObservableObject {
     @Published private(set) var preview: Image?
     @Published private(set) var thumbnailImage: Image?
     @Published private(set) var flashMode = AVCaptureDevice.FlashMode.off
+    @Published private(set) var isShowingGrid = false
     
     init() {
         Task {
@@ -80,6 +81,10 @@ final class Camera: ObservableObject {
     
     func toggleFlashMode() {
         flashMode = flashMode == .on ? .off : .on
+    }
+    
+    func toggleGrid() {
+        isShowingGrid.toggle()
     }
 }
 
