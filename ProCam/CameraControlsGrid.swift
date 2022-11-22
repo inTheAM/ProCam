@@ -160,7 +160,6 @@ extension CameraControlsGrid {
     /// A button that toggles the flash.
     var flashlightButton: some View {
         Button {
-            #warning("Toggle flashlight")
             camera.toggleFlashMode()
         } label: {
             Image(systemName: camera.flashMode == .on ? "bolt.fill" : "bolt.slash.fill")

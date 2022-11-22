@@ -89,9 +89,6 @@ struct ContentView: View {
                                         focusLoupeButton
                                     }
                                     HStack {
-                                        Spacer()
-                                    }
-                                    HStack {
                                         macroModeButton
                                         Spacer()
                                         autoManualFocusButton
@@ -385,7 +382,6 @@ extension ContentView {
         .accessibilityLabel("Activate portrait mode.")
     }
     
-#warning("Show last image in library")
     /// The preview of the last image in the user's photo library.
     var lastImageInLibrary: some View {
         Group {
