@@ -17,7 +17,6 @@ struct SegmentedSlider: View {
         Array(stride(from: lowerBound, through: upperBound, by: strideLength))
     }
     @State private var minX = 0.0
-    @State private var hapticEngine: CHHapticEngine?
     @EnvironmentObject var hapticFeedback: HapticFeedback
     
     func opacity(index: Int) -> Double {
