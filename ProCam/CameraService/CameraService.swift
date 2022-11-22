@@ -138,22 +138,36 @@ extension CameraService {
         }
     }
     
+    /// Sets the focus mode for the current device.
+    /// Manual focus is only set for devices that support it.
+    /// - Parameter mode: The focus mode to set the capture device to.
     func switchFocusMode(to mode: AVCaptureDevice.FocusMode) {
+        // Make sure the focus mode is supported on the capture device.
+        guard captureDevice?.isFocusModeSupported(mode) == true
+        else { return }
+        
+        // lockForConfiguration is REQUIRED for exclusive access to the capture device's
+        // configuration properties.
         try? captureDevice?.lockForConfiguration()
+        
+        // Set the capture device's focus mode to the passed in mode.
         captureDevice?.focusMode = mode
+        
+        // After performing changes, release the lock on the device's settings.
         captureDevice?.unlockForConfiguration()
+        
     }
     
-    var lensPosition: Float {
-        AVCaptureDevice.currentLensPosition
-    }
-    
+    /// Sets the lens position for manual focus if supported on the capture device.
+    /// - Parameter position: The lens position to lock focus on.
     func setManualFocus(to position: Float) {
-        if captureDevice?.isFocusModeSupported(.locked) == true {
-            try? captureDevice?.lockForConfiguration()
-            captureDevice?.setFocusModeLocked(lensPosition: position)
-            captureDevice?.unlockForConfiguration()
-        }
+        // Make sure the capture device supports locked focus or exit.
+        guard captureDevice?.isFocusModeSupported(.locked) == true
+        else { return }
+        try? captureDevice?.lockForConfiguration()
+        captureDevice?.setFocusModeLocked(lensPosition: position)
+        captureDevice?.unlockForConfiguration()
+        
     }
     
     /// Configures the capture session, adding inputs and outputs for photos and video.
@@ -167,7 +181,7 @@ extension CameraService {
             captureSession.commitConfiguration()
         }
         
-        // Check for a capture device
+        // Check for the capture device
         guard let captureDevice = captureDevice
         else { return }
         
@@ -314,34 +328,48 @@ extension CameraService {
     
     /// Starts the capture session.
     func start() async {
+        // Check for authorization.
         let authorized = await isAuthorized()
         guard authorized else {
             return
         }
         
+        // Check if the session has already been configured and is not running.
+        // In which case start running the session.
         if isCaptureSessionConfigured {
             if !captureSession.isRunning {
+                
+                // On the session's dispatch queue, start running the session.
                 sessionQueue.async { [self] in
                     self.captureSession.startRunning()
                 }
             }
+            // Exit
             return
         }
         
+        // If we are here, the session was not configured.
         sessionQueue.async { [self] in
             do {
+                // Configure the capture session
                 try self.configureCaptureSession()
+                
+                // Start runnig the session.
                 self.captureSession.startRunning()
             } catch {
                 
+                // Handle the error if configuring fails.
+                print(error.localizedDescription)
             }
         }
     }
     
     /// Ends the capture session.
     func stop() {
+        // Make sure the session was configured or exit if not.
         guard isCaptureSessionConfigured else { return }
         
+        // Stop the session if it is running.
         if captureSession.isRunning {
             sessionQueue.async {
                 self.captureSession.stopRunning()
@@ -373,12 +401,12 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
     
     /// Delegate method to handle photo capture.
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        
         if let error = error {
             print("Error capturing photo: \(error.localizedDescription)")
             return
         }
-        // Send captured photo to the photo stream
+        
+        // Send captured photo to the photo stream.
         addToPhotoStream?(photo)
     }
 }
