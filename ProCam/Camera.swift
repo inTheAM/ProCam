@@ -13,7 +13,7 @@ final class Camera: ObservableObject {
     private let service = CameraService()
     @Published private(set) var preview: Image?
     @Published private(set) var thumbnailImage: Image?
-    @Published var flashMode = AVCaptureDevice.FlashMode.off
+    @Published private(set) var flashMode = AVCaptureDevice.FlashMode.off
     
     init() {
         Task {
@@ -76,6 +76,10 @@ final class Camera: ObservableObject {
     
     func switchRearCamera() {
         service.switchRearCaptureDevice()
+    }
+    
+    func toggleFlashMode() {
+        flashMode = flashMode == .on ? .off : .on
     }
 }
 

@@ -161,10 +161,11 @@ extension CameraControlsGrid {
     var flashlightButton: some View {
         Button {
             #warning("Toggle flashlight")
+            camera.toggleFlashMode()
         } label: {
-            Image(systemName: "bolt.slash.fill")
+            Image(systemName: camera.flashMode == .on ? "bolt.fill" : "bolt.slash.fill")
                 .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundColor(camera.flashMode == .on ? .yellow : .white)
         }
         .accessibilityLabel("Turn on flashlight.")
     }
