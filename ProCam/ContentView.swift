@@ -29,9 +29,14 @@ struct ContentView: View {
             // with the controls overlaid in a `ZStack`.
             ZStack(alignment: .bottom) {
                 VStack {
-                    CameraPreview()
+                    cameraPreview
                         .overlay {
                             balanceIndicator
+                        }
+                        .overlay {
+                            if camera.isShowingGrid {
+                                grid
+                            }
                         }
                         .overlay(alignment: .trailing) {
                             if isShowingAutoManualSelection {
@@ -152,19 +157,42 @@ struct ContentView: View {
 }
 
 extension ContentView {
-#warning("Show camera preview")
+    
     /// The preview of what the camera sees.
-    struct CameraPreview: View {
-        @EnvironmentObject var camera: Camera
-        var body: some View {
-            if let image = camera.preview {
-                image
-                    .scaledToFit()
-                    .accessibilityLabel("Camera preview.")
-            } else {
+    @ViewBuilder var cameraPreview: some View {
+        if let image = camera.preview {
+            image
+                .scaledToFit()
+                .accessibilityLabel("Camera preview.")
+        } else {
+            Rectangle()
+                .foregroundColor(.cyan.opacity(0.2))
+        }
+    }
+    
+    var grid: some View {
+        ZStack {
+            HStack {
+                Spacer()
                 Rectangle()
-                    .foregroundColor(.cyan.opacity(0.2))
+                    .frame(width: 1)
+                Spacer()
+                Rectangle()
+                    .frame(width: 1)
+                Spacer()
             }
+            .opacity(0.5)
+            
+            VStack {
+                Spacer()
+                Rectangle()
+                    .frame(height: 1)
+                Spacer()
+                Rectangle()
+                    .frame(height: 1)
+                Spacer()
+            }
+            .opacity(0.5)
         }
     }
     
