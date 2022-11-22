@@ -50,6 +50,7 @@ final class CameraService: NSObject {
     private var captureDevice: AVCaptureDevice? {
         didSet {
             guard let captureDevice = captureDevice else { return }
+            print(captureDevice.deviceType, captureDevice.activeFormat.videoZoomFactorUpscaleThreshold)
             sessionQueue.async {
                 self.updateSessionForCaptureDevice(captureDevice)
             }
@@ -254,7 +255,7 @@ extension CameraService {
     }
     
     /// Captures a photo
-    func capturePhoto() {
+    func capturePhoto(flashMode: AVCaptureDevice.FlashMode) {
         sessionQueue.async { [ weak self] in
             guard let self  else { return }
             
@@ -268,9 +269,7 @@ extension CameraService {
             
             // Check for flash functionality
             let isFlashAvailable = self.deviceInput?.device.isFlashAvailable ?? false
-            photoSettings.flashMode = isFlashAvailable ? .auto : .off
-            
-            photoSettings.isHighResolutionPhotoEnabled = true
+            photoSettings.flashMode = isFlashAvailable ? flashMode : .off
             
             // Set the pixel format
             if let previewPhotoPixelFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
