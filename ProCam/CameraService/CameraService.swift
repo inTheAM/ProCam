@@ -28,9 +28,9 @@ final class CameraService: NSObject {
     /// The active device input for the capture session.
     private var deviceInput: AVCaptureDeviceInput?
     
-    /// All capture devices
+    /// All capture devices on the device.
     private var allCaptureDevices: [AVCaptureDevice] {
-        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInDualWideCamera, .builtInWideAngleCamera, .builtInDualWideCamera], mediaType: .video, position: .unspecified).devices
+        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInUltraWideCamera, .builtInTelephotoCamera, .builtInWideAngleCamera], mediaType: .video, position: .unspecified).devices
     }
     
     /// Front capture devices
@@ -111,10 +111,29 @@ final class CameraService: NSObject {
                                                 for: .video,
                                                 position: .back)
     }
-    
 }
 
 extension CameraService {
+    /// Flips between front and rear cameras.
+    func flipCaptureDevice() {
+        if let captureDevice = captureDevice {
+            if rearCaptureDevices.contains(captureDevice) {
+                self.captureDevice = frontCaptureDevices.first
+            } else {
+                self.captureDevice = rearCaptureDevices.first(where: { $0.deviceType == .builtInWideAngleCamera })
+            }
+        }
+    }
+    
+    /// Switches between the available rear cameras.
+    func switchRearCaptureDevice() {
+        if let captureDevice = captureDevice, let index = rearCaptureDevices.firstIndex(of: captureDevice) {
+            let nextIndex = (index + 1) % rearCaptureDevices.count
+            self.captureDevice = rearCaptureDevices[nextIndex]
+        } else {
+            self.captureDevice = AVCaptureDevice.default(for: .video)
+        }
+    }
     
     /// Configures the capture session, adding inputs and outputs for photos and video.
     func configureCaptureSession() throws {
