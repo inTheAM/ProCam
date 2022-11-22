@@ -11,8 +11,9 @@ import SwiftUI
 @MainActor
 final class Camera: ObservableObject {
     private let service = CameraService()
-    @Published var preview: Image?
-    @Published var thumbnailImage: Image?
+    @Published private(set) var preview: Image?
+    @Published private(set) var thumbnailImage: Image?
+    @Published var flashMode = AVCaptureDevice.FlashMode.off
     
     init() {
         Task {
@@ -66,7 +67,15 @@ final class Camera: ObservableObject {
     }
     
     func capture() {
-        service.capturePhoto()
+        service.capturePhoto(flashMode: flashMode)
+    }
+    
+    func flipCamera() {
+        service.flipCaptureDevice()
+    }
+    
+    func switchRearCamera() {
+        service.switchRearCaptureDevice()
     }
 }
 

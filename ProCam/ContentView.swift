@@ -379,7 +379,6 @@ extension ContentView {
     /// The button to capture the photo.
     var capturePhotoButton: some View {
         Button {
-            #warning("Capture photo")
             camera.capture()
         } label: {
             LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
@@ -402,7 +401,7 @@ extension ContentView {
     /// The button to switch between the different rear cameras.
     var switchBetweenRearCamerasButton: some View {
         Button {
-            #warning("Switch between rear cameras")
+            camera.switchRearCamera()
         } label: {
             Text("1x")
                 .padding(10)

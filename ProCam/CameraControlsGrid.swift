@@ -19,6 +19,7 @@ struct CameraControlsGrid: View {
     @Environment(\.scenePhase) var scenePhase
     
     @EnvironmentObject var hapticFeedback: HapticFeedback
+    @EnvironmentObject var camera: Camera
     
     @State private var isShowingTimerSettings = false
     
@@ -188,7 +189,7 @@ extension CameraControlsGrid {
     /// A button that switches between the front and rear cameras.
     var switchFrontRearCameraButton: some View {
         Button {
-            #warning("Switch between front and rear cameras")
+            camera.flipCamera()
         } label: {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 20, weight: .light, design: .monospaced))
