@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @Namespace private var namespace
     @StateObject private var camera = Camera()
-    @State private var isInManualfocus = false
+    
     @State private var isShowingAutoManualSelection = false
     @State private var focusAmount = 0.0
     var body: some View {
@@ -67,7 +67,7 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     CameraControlsGrid()
-                        .padding(.bottom, isInManualfocus ? 232 : 208)
+                        .padding(.bottom, camera.isInManualfocus ? 232 : 208)
                 }
                 
                 VStack(spacing: 0) {
@@ -75,7 +75,7 @@ struct ContentView: View {
                     Divider()
                     
                     VStack {
-                        if isInManualfocus {
+                        if camera.isInManualfocus {
                             
                             ZStack(alignment: .bottom) {
                                 VStack {
@@ -143,7 +143,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .animation(.default, value: isInManualfocus)
+            .animation(.default, value: camera.isInManualfocus)
         }
         .ignoresSafeArea()
         .environmentObject(camera)
@@ -298,14 +298,14 @@ extension ContentView {
     var autoManualFocusButton: some View {
         Button {
             #warning("Toggle Auto/Manual Focus")
-            isInManualfocus.toggle()
+            camera.toggleFocusMode()
         } label: {
             Text("AF")
                 .font(.system(size: 14, weight: .light, design: .rounded))
                 .padding(8)
-                .foregroundColor(isInManualfocus ? .white : .yellow)
+                .foregroundColor(camera.isInManualfocus ? .white : .yellow)
                 .background {
-                    CircleBackground(color: isInManualfocus ? .gray : .yellow)
+                    CircleBackground(color: camera.isInManualfocus ? .gray : .yellow)
                 }
         }
         .padding([.horizontal])

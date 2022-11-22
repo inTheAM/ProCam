@@ -57,6 +57,8 @@ final class CameraService: NSObject {
         }
     }
     
+    private var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
+    
     /// Tracks whether the capture session is running
     var isRunning: Bool {
         captureSession.isRunning
@@ -134,6 +136,12 @@ extension CameraService {
         } else {
             self.captureDevice = AVCaptureDevice.default(for: .video)
         }
+    }
+    
+    func switchFocusMode(to mode: AVCaptureDevice.FocusMode) {
+        try? captureDevice?.lockForConfiguration()
+        captureDevice?.focusMode = mode
+        captureDevice?.unlockForConfiguration()
     }
     
     /// Configures the capture session, adding inputs and outputs for photos and video.

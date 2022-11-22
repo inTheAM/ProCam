@@ -15,7 +15,10 @@ final class Camera: ObservableObject {
     @Published private(set) var thumbnailImage: Image?
     @Published private(set) var flashMode = AVCaptureDevice.FlashMode.off
     @Published private(set) var isShowingGrid = false
-    
+    @Published private(set) var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
+    var isInManualfocus: Bool {
+        focusMode == .locked
+    }
     init() {
         Task {
             await handleCameraPreviews()
@@ -39,9 +42,8 @@ final class Camera: ObservableObject {
             .compactMap { await self.unpackPhoto($0) }
         
         for await photoData in unpackedPhotoStream {
-            Task { @MainActor in
+            Task {
                 thumbnailImage = photoData.thumbnailImage
-                print("Assigned thumbnail")
             }
         }
     }
@@ -85,6 +87,11 @@ final class Camera: ObservableObject {
     
     func toggleGrid() {
         isShowingGrid.toggle()
+    }
+    
+    func toggleFocusMode() {
+        focusMode = focusMode == .continuousAutoFocus ? .locked : .continuousAutoFocus
+        service.switchFocusMode(to: focusMode)
     }
 }
 
