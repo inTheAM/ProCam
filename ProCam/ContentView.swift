@@ -12,7 +12,6 @@ struct ContentView: View {
     @StateObject private var camera = Camera()
     
     @State private var isShowingAutoManualSelection = false
-    @State private var focusAmount = 0.0
     var body: some View {
         VStack(spacing: 0) {
             // The histogram view and button to toggle between auto/manual modes.
@@ -98,7 +97,7 @@ struct ContentView: View {
                                 .padding(.bottom, 10)
                                 .zIndex(2)
                                 
-                                SegmentedSlider(value: $focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
+                                SegmentedSlider(value: $camera.focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
                                     .zIndex(1)
                                 
                             }
@@ -297,7 +296,6 @@ extension ContentView {
     /// The button to toggle between autofocus and manual focus.
     var autoManualFocusButton: some View {
         Button {
-            #warning("Toggle Auto/Manual Focus")
             camera.toggleFocusMode()
         } label: {
             Text("AF")

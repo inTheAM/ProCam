@@ -6,16 +6,20 @@
 //
 
 import AVFoundation
+import Combine
 import SwiftUI
 
 @MainActor
 final class Camera: ObservableObject {
     private let service = CameraService()
+    private var cancellables = Set<AnyCancellable>()
     @Published private(set) var preview: Image?
     @Published private(set) var thumbnailImage: Image?
     @Published private(set) var flashMode = AVCaptureDevice.FlashMode.off
     @Published private(set) var isShowingGrid = false
     @Published private(set) var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
+    @Published var focusAmount: Double = 0.0
+    
     var isInManualfocus: Bool {
         focusMode == .locked
     }
@@ -26,12 +30,17 @@ final class Camera: ObservableObject {
         Task {
             await handleCameraPhotos()
         }
+        $focusAmount
+            .sink { [weak self] amount in
+                self?.setManualFocus(to: Float(amount))
+            }
+            .store(in: &cancellables)
     }
     
     func handleCameraPreviews() async {
         let imageStream = service.previewStream
             .map { $0.image }
-
+        print("Position", service.lensPosition)
         for await image in imageStream {
             preview = image
         }
@@ -92,6 +101,10 @@ final class Camera: ObservableObject {
     func toggleFocusMode() {
         focusMode = focusMode == .continuousAutoFocus ? .locked : .continuousAutoFocus
         service.switchFocusMode(to: focusMode)
+    }
+    
+    func setManualFocus(to position: Float) {
+        service.setManualFocus(to: position)
     }
 }
 

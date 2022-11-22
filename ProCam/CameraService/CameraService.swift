@@ -144,6 +144,18 @@ extension CameraService {
         captureDevice?.unlockForConfiguration()
     }
     
+    var lensPosition: Float {
+        AVCaptureDevice.currentLensPosition
+    }
+    
+    func setManualFocus(to position: Float) {
+        if captureDevice?.isFocusModeSupported(.locked) == true {
+            try? captureDevice?.lockForConfiguration()
+            captureDevice?.setFocusModeLocked(lensPosition: position)
+            captureDevice?.unlockForConfiguration()
+        }
+    }
+    
     /// Configures the capture session, adding inputs and outputs for photos and video.
     func configureCaptureSession() throws {
         // Begin configuration
