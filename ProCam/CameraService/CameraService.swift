@@ -30,7 +30,10 @@ final class CameraService: NSObject {
     
     /// All capture devices on the device.
     private var allCaptureDevices: [AVCaptureDevice] {
-        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInUltraWideCamera, .builtInTelephotoCamera, .builtInWideAngleCamera], mediaType: .video, position: .unspecified).devices
+        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera], mediaType: .video, position: .unspecified).devices
+    }
+    private var multiLensDevices: [AVCaptureDevice] {
+        AVCaptureDevice.DiscoverySession(deviceTypes:[.builtInTripleCamera, .builtInDualWideCamera, .builtInDualCamera],  mediaType: .video, position: .unspecified).devices
     }
     
     /// Front capture devices
@@ -50,7 +53,6 @@ final class CameraService: NSObject {
     private var captureDevice: AVCaptureDevice? {
         didSet {
             guard let captureDevice = captureDevice else { return }
-            print(captureDevice.deviceType, captureDevice.activeFormat.videoZoomFactorUpscaleThreshold)
             sessionQueue.async {
                 self.updateSessionForCaptureDevice(captureDevice)
             }
@@ -84,6 +86,7 @@ final class CameraService: NSObject {
     /// Tracks whether the preview is on or paused.
     var isPreviewPaused = false
     
+    
     /// The stream of frames from the capture device, loaded asynchronously and returned as`CIImage`.
     lazy var previewStream: AsyncStream<CIImage> = {
         AsyncStream { continuation in
@@ -110,9 +113,38 @@ final class CameraService: NSObject {
     /// Initializes the capture device to the wide angle rear camera.
     override init() {
         super.init()
-        captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera,
-                                                for: .video,
-                                                position: .back)
+        captureDevice = rearCaptureDevices.first
+    }
+    
+    
+    typealias Lens = (label: String, zoomFactor: CGFloat)
+    private var lenses = [Lens]()
+    
+    private(set) var currentLens = CurrentValueSubject<Lens?, Never>(nil)
+    
+    func updateLensOptions() {
+        if let zoomFactors = multiLensDevices.first?.virtualDeviceSwitchOverVideoZoomFactors {
+            if zoomFactors.isEmpty {
+                lenses = [(label: "1", zoomFactor: 1)]
+            } else {
+                if captureDevice?.deviceType == .builtInDualCamera {
+                    lenses = [(label: "1", zoomFactor: 1)]
+                    let otherLenses = zoomFactors
+                        .map { factor in
+                            (label: "2", zoomFactor: CGFloat(factor.floatValue))
+                        }
+                    lenses.append(contentsOf: otherLenses)
+                    
+                } else {
+                    lenses = [(label: "0.5", zoomFactor: 1)]
+                    let otherLenses = zoomFactors
+                        .map { factor in
+                            (label: "\(factor.intValue/2)", zoomFactor: CGFloat(factor.floatValue))
+                        }
+                    lenses.append(contentsOf: otherLenses)
+                }
+            }
+        }
     }
 }
 
@@ -123,18 +155,22 @@ extension CameraService {
             if rearCaptureDevices.contains(captureDevice) {
                 self.captureDevice = frontCaptureDevices.first
             } else {
-                self.captureDevice = rearCaptureDevices.first(where: { $0.deviceType == .builtInWideAngleCamera })
+                self.captureDevice = rearCaptureDevices.first
             }
         }
     }
     
     /// Switches between the available rear cameras.
     func switchRearCaptureDevice() {
-        if let captureDevice = captureDevice, let index = rearCaptureDevices.firstIndex(of: captureDevice) {
-            let nextIndex = (index + 1) % rearCaptureDevices.count
-            self.captureDevice = rearCaptureDevices[nextIndex]
+        if let device = captureDevice,
+           let deviceIndex = rearCaptureDevices.firstIndex(of: device),
+           let lensIndex = lenses.firstIndex(where: { $0.label == currentLens.value?.label} ) {
+            let nextDeviceIndex = (deviceIndex + 1) % rearCaptureDevices.count
+            let nextLensIndex = (lensIndex + 1) % lenses.count
+            self.captureDevice = rearCaptureDevices[nextDeviceIndex]
+            currentLens.send(lenses[nextLensIndex])
         } else {
-            self.captureDevice = AVCaptureDevice.default(for: .video)
+            self.captureDevice = rearCaptureDevices.first
         }
     }
     
@@ -146,15 +182,25 @@ extension CameraService {
         guard captureDevice?.isFocusModeSupported(mode) == true
         else { return }
         
+        
         // lockForConfiguration is REQUIRED for exclusive access to the capture device's
         // configuration properties.
-        try? captureDevice?.lockForConfiguration()
+        switch mode {
+        case .locked:
+            try? captureDevice?.lockForConfiguration()
+            
+            // Set the capture device's focus mode to the passed in mode.
+            captureDevice?.setFocusModeLocked(lensPosition: AVCaptureDevice.currentLensPosition)
+            print(captureDevice?.lensPosition)
+            
+            // After performing changes, release the lock on the device's settings.
+            captureDevice?.unlockForConfiguration()
+        case .autoFocus:
+            captureDevice?.focusMode = .autoFocus
+        case .continuousAutoFocus:
+            captureDevice?.focusMode = .continuousAutoFocus
+        }
         
-        // Set the capture device's focus mode to the passed in mode.
-        captureDevice?.focusMode = mode
-        
-        // After performing changes, release the lock on the device's settings.
-        captureDevice?.unlockForConfiguration()
         
     }
     
@@ -216,12 +262,14 @@ extension CameraService {
         self.photoOutput = photoOutput
         self.videoOutput = videoOutput
         
-        photoOutput.isHighResolutionCaptureEnabled = true
         photoOutput.maxPhotoQualityPrioritization = .quality
         
         // Update the video output connection to mirror output if using front camera.
         updateVideoOutputConnection()
+        updateLensOptions()
         
+        let lensToUse = lenses.first(where: { $0.label == "1"} )!
+        currentLens.send(lensToUse)
         isCaptureSessionConfigured = true
         
         // Deferred block runs here.
