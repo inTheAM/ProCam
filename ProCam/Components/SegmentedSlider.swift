@@ -35,7 +35,7 @@ struct SegmentedSlider: View {
                         let rangeValue = range[index]
                         VStack(spacing: 4) {
                             if isSignificant(index: index) {
-                                Text("\(range[index], specifier: "%.1f")")
+                                Text("\(rangeValue, specifier: "%.1f")")
                                     .font(.caption2.bold())
                                     .foregroundColor(.gray)
                                     .fixedSize()
@@ -50,7 +50,7 @@ struct SegmentedSlider: View {
                         }
                         .frame(width: 3)
                         .onChange(of: value.roundedTo(places: 2)) { newValue in
-                            if newValue == range[index].roundedTo(places: 2) {
+                            if newValue == rangeValue.roundedTo(places: 2) {
                                 hapticFeedback.playTick(isEmphasized: isSignificant(index: index))
                             }
                         }
