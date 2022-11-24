@@ -11,6 +11,11 @@ import SwiftUI
 
 @MainActor
 final class Camera: ObservableObject {
+    enum CameraMode {
+        case auto,
+             manual
+    }
+
     private let service = CameraService()
     private var cancellables = Set<AnyCancellable>()
     @Published private(set) var preview: Image?
@@ -18,6 +23,7 @@ final class Camera: ObservableObject {
     @Published private(set) var flashMode = AVCaptureDevice.FlashMode.off
     @Published private(set) var isShowingGrid = false
     @Published private(set) var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
+    @Published var cameraMode = CameraMode.auto
     @Published var focusAmount: Double = 0.0
     @Published private(set) var currentLens: String = ""
     
