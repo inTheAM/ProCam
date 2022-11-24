@@ -66,6 +66,10 @@ final class CameraService: NSObject {
         captureSession.isRunning
     }
     
+    var supportsManualFocus: Bool {
+        captureDevice?.isLockingFocusWithCustomLensPositionSupported ?? false
+    }
+    
     /// Tracks whether the current capture device is a front device.
     var isUsingFrontCaptureDevice: Bool {
         guard let captureDevice = captureDevice else { return false }
@@ -182,25 +186,15 @@ extension CameraService {
         guard captureDevice?.isFocusModeSupported(mode) == true
         else { return }
         
-        
         // lockForConfiguration is REQUIRED for exclusive access to the capture device's
         // configuration properties.
-        switch mode {
-        case .locked:
-            try? captureDevice?.lockForConfiguration()
-            
-            // Set the capture device's focus mode to the passed in mode.
-            captureDevice?.setFocusModeLocked(lensPosition: AVCaptureDevice.currentLensPosition)
-            print(captureDevice?.lensPosition)
-            
-            // After performing changes, release the lock on the device's settings.
-            captureDevice?.unlockForConfiguration()
-        case .autoFocus:
-            captureDevice?.focusMode = .autoFocus
-        case .continuousAutoFocus:
-            captureDevice?.focusMode = .continuousAutoFocus
-        }
+        try? captureDevice?.lockForConfiguration()
         
+        // Set the capture device's focus mode to the passed in mode.
+        captureDevice?.focusMode = mode
+        
+        // After performing changes, release the lock on the device's settings.
+        captureDevice?.unlockForConfiguration()
         
     }
     

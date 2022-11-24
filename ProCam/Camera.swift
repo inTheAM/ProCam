@@ -19,10 +19,16 @@ final class Camera: ObservableObject {
     @Published private(set) var isShowingGrid = false
     @Published private(set) var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
     @Published var focusAmount: Double = 0.0
+    @Published private(set) var currentLens: String = ""
     
     var isInManualfocus: Bool {
         focusMode == .locked
     }
+    
+    var supportsManualFocus: Bool {
+        service.supportsManualFocus
+    }
+    
     init() {
         Task {
             await handleCameraPreviews()
@@ -31,8 +37,16 @@ final class Camera: ObservableObject {
             await handleCameraPhotos()
         }
         $focusAmount
+            .dropFirst()
             .sink { [weak self] amount in
                 self?.setManualFocus(to: Float(amount))
+            }
+            .store(in: &cancellables)
+        
+        service.currentLens
+            .receive(on: RunLoop.main)
+            .sink { [weak self] lens in
+                self?.currentLens = lens?.label ?? ""
             }
             .store(in: &cancellables)
     }
@@ -40,7 +54,7 @@ final class Camera: ObservableObject {
     func handleCameraPreviews() async {
         let imageStream = service.previewStream
             .map { $0.image }
-        print("Position", service.lensPosition)
+        
         for await image in imageStream {
             preview = image
         }

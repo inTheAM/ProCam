@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @Namespace private var namespace
     @StateObject private var camera = Camera()
-    
+    @StateObject private var hapticFeedback = HapticFeedback.shared
     @State private var isShowingAutoManualSelection = false
     var body: some View {
         VStack(spacing: 0) {
@@ -75,7 +75,6 @@ struct ContentView: View {
                     
                     VStack {
                         if camera.isInManualfocus {
-                            
                             ZStack(alignment: .bottom) {
                                 VStack {
                                     HStack {
@@ -110,10 +109,11 @@ struct ContentView: View {
                             
                             // The Autofocus button and Portrait mode button
                             HStack {
-                                
-                                autoManualFocusButton
-                                    .matchedGeometryEffect(id: "automanualfocus", in: namespace)
-                                
+                                if camera.supportsManualFocus {
+                                    autoManualFocusButton
+                                        .transition(.scale)
+                                        .matchedGeometryEffect(id: "automanualfocus", in: namespace)
+                                }
                                 Spacer(minLength: 0)
                                 
                                 portraitModeButton
@@ -146,6 +146,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea()
         .environmentObject(camera)
+        .environmentObject(hapticFeedback)
         .task {
             await camera.start()
         }
@@ -402,6 +403,7 @@ extension ContentView {
     var capturePhotoButton: some View {
         Button {
             camera.capture()
+            hapticFeedback.playTick(isEmphasized: true)
         } label: {
             LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
                 .clipShape(Circle())
@@ -425,7 +427,7 @@ extension ContentView {
         Button {
             camera.switchRearCamera()
         } label: {
-            Text("1x")
+            Text(camera.currentLens)
                 .padding(10)
                 .background {
                     Circle().stroke(lineWidth: 2)
