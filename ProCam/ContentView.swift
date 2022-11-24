@@ -22,129 +22,110 @@ struct ContentView: View {
                 
                 autoManualModeButton
             }
+            .opacity(0)
             .padding()
             
             // The camera preview and bottom controls background,
             // with the controls overlaid in a `ZStack`.
-            ZStack(alignment: .bottom) {
-                VStack {
-                    cameraPreview
-                        .overlay {
-                            balanceIndicator
+            
+            VStack(spacing: 0) {
+                cameraPreview
+                    .overlay {
+                        balanceIndicator
+                    }
+                    .overlay {
+                        if camera.isShowingGrid {
+                            grid
                         }
-                        .overlay {
-                            if camera.isShowingGrid {
-                                grid
+                    }
+                    .overlay(alignment: .bottom) {
+                        if camera.isInManualfocus {
+                            SegmentedSlider(value: $camera.focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
+                                .padding(.bottom)
+                        }
+                    }
+                    .overlay(alignment: .bottomTrailing) {
+                        switchBetweenRearCamerasButton
+                            .background {
+                                Color.black.opacity(0.3)
+                                    .clipShape(Circle())
                             }
-                        }
-                        .overlay(alignment: .trailing) {
-                            if isShowingAutoManualSelection {
-                                VStack(alignment: .trailing) {
-                                    VStack {
+                            .padding()
+                    }
+                    .overlay(alignment: .topTrailing) {
+                                HStack {
+                                    if camera.cameraMode == .auto  {
                                         autoButton
+                                    } else {
                                         manualButton
                                     }
-                                    .background(Color.black.opacity(0.5).cornerRadius(28))
-                                    
-                                    zebrasButton
-                                        .background(Color.black.opacity(0.5).cornerRadius(28))
-                                        .padding(.vertical)
-                                    Spacer()
                                 }
-                                .padding(8)
-                                .padding(.top)
-                                .zIndex(1)
-                                .transition(.move(edge: .trailing))
-                            }
-                        }
-                        .animation(.default, value: isShowingAutoManualSelection)
-                    
-                    Rectangle()
-                        .foregroundColor(.black)
-                        .frame(height: 272)
-                }
-                VStack {
-                    Spacer()
-                    CameraControlsGrid()
-                        .padding(.bottom, camera.isInManualfocus ? 232 : 208)
-                }
+                                .background(Color.black.opacity(0.2).cornerRadius(16))
+                                .padding()
+                        
+                    }
+                    .animation(.default, value: isShowingAutoManualSelection)
                 
-                VStack(spacing: 0) {
-                    Spacer()
-                    Divider()
-                    
-                    VStack {
-                        if camera.isInManualfocus {
-                            ZStack(alignment: .bottom) {
-                                VStack {
-                                    HStack {
-                                        focusPeakingButton
-                                        
-                                        Spacer()
-                                        
-                                        portraitModeButton
-                                            .matchedGeometryEffect(id: "portraitmode", in: namespace)
-                                        focusLoupeButton
-                                    }
-                                    HStack {
-                                        macroModeButton
-                                        Spacer()
-                                        autoManualFocusButton
-                                            .matchedGeometryEffect(id: "automanualfocus", in: namespace)
-                                    }
+                VStack {
+                CameraControlsGrid()
+                
+                Divider()
+                    if camera.isInManualfocus {
+                        ZStack {
+                            VStack {
+                                HStack {
+                                    focusPeakingButton
+                                    
+                                    Spacer()
+                                    
+                                    portraitModeButton
+                                        .matchedGeometryEffect(id: "portraitmode", in: namespace)
+                                    focusLoupeButton
                                 }
-                                .padding(.bottom, 10)
-                                .zIndex(2)
-                                
-                                SegmentedSlider(value: $camera.focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
-                                    .zIndex(1)
-                                
-                            }
-                            .padding(.horizontal, 8)
-                        } else {
-                            
-                            HStack {
-                                Spacer()
-                            }
-                            
-                            // The Autofocus button and Portrait mode button
-                            HStack {
-                                if camera.supportsManualFocus {
+                                HStack {
+                                    macroModeButton
+                                    Spacer()
                                     autoManualFocusButton
-                                        .transition(.scale)
                                         .matchedGeometryEffect(id: "automanualfocus", in: namespace)
                                 }
-                                Spacer(minLength: 0)
-                                
-                                portraitModeButton
-                                    .matchedGeometryEffect(id: "portraitmode", in: namespace)
                             }
-                            .padding([.horizontal, .top], 8)
+                            
                         }
-                        // The last image in the user's library,
-                        // capture button and
-                        // button for switching between the different rear cameras.
-                        HStack(alignment: .bottom) {
-                            lastImageInLibrary
+                        .padding(.horizontal, 8)
+                    } else {
+                        
+                        // The Autofocus button and Portrait mode button
+                        HStack {
+                            if camera.supportsManualFocus {
+                                autoManualFocusButton
+                                    .transition(.scale)
+                                    .matchedGeometryEffect(id: "automanualfocus", in: namespace)
+                            }
+                            Spacer(minLength: 0)
                             
-                            Spacer()
-                            
-                            capturePhotoButton
-                            
-                            Spacer()
-                            
-                            switchBetweenRearCamerasButton
+                            portraitModeButton
+                                .matchedGeometryEffect(id: "portraitmode", in: namespace)
                         }
+                        .padding([.horizontal], 8)
                     }
-                    .background {
-                        Color.white.opacity(0.05)
-                            .background(Color.black)
+                    // The last image in the user's library,
+                    // capture button and
+                    // button for switching between the different rear cameras.
+                    
+                    HStack(alignment: .bottom) {
+                        lastImageInLibrary
+                        
+                        Spacer()
                     }
                 }
+                
             }
-            .animation(.default, value: camera.isInManualfocus)
         }
         .ignoresSafeArea()
+        .overlay(alignment: .bottom) {
+            capturePhotoButton
+        }
+        .animation(.default, value: camera.isInManualfocus)
         .environmentObject(camera)
         .environmentObject(hapticFeedback)
         .task {
@@ -163,7 +144,7 @@ extension ContentView {
                 .accessibilityLabel("Camera preview.")
         } else {
             Rectangle()
-                .foregroundColor(.cyan.opacity(0.2))
+                .foregroundColor(.black)
         }
     }
     
@@ -220,20 +201,13 @@ extension ContentView {
     var autoButton: some View {
         Button {
             #warning("Toggle auto mode")
+            camera.cameraMode = .manual
         } label: {
-            VStack {
-                Image("AFTriangle")
-                    .renderingMode(.template)
-                    .resizable()
-                    .padding(12)
-                    .background(Circle().stroke(lineWidth: 2))
-                    .frame(width: 44, height: 44)
-                Text("AUTO")
-                    .font(.system(size: 14))
-            }
-            .tint(.yellow)
+            Text("AUTO")
+                .font(.system(size: 14))
+                .tint(.yellow.opacity(0.6))
         }
-        .padding()
+        .padding(8)
         .accessibilityLabel("Switch to Auto mode.")
     }
     
@@ -241,20 +215,13 @@ extension ContentView {
     var manualButton: some View {
         Button {
             #warning("Toggle manual mode")
+            camera.cameraMode = .auto
         } label: {
-            VStack {
-                Text("M")
-                    .font(.title3.monospaced())
-                    .padding()
-                    .background(Circle().stroke(lineWidth: 2).foregroundColor(.gray))
-                    .frame(width: 56, height: 56)
                 Text("MANUAL")
                     .font(.system(size: 14))
-                
-            }
-            .foregroundColor(.white)
+                    .tint(.yellow.opacity(0.6))
         }
-        .padding()
+        .padding(8)
         .accessibilityLabel("Switch to manual mode.")
     }
     
@@ -428,15 +395,16 @@ extension ContentView {
             camera.switchRearCamera()
         } label: {
             Text(camera.currentLens)
-                .padding(10)
+                .font(.caption)
+                .fixedSize()
+                .padding(8)
                 .background {
                     Circle().stroke(lineWidth: 2)
                 }
                 .foregroundColor(.white)
-            
+                .frame(width: 30, height: 30)
         }
-        .padding(.horizontal, 28)
-        .padding(.bottom, 32)
+        .padding(8)
         .accessibilityLabel("Switch between rear cameras. Currently at 1x")
     }
 }
