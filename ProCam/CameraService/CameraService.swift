@@ -28,9 +28,12 @@ final class CameraService: NSObject {
     /// The active device input for the capture session.
     private var deviceInput: AVCaptureDeviceInput?
     
-    /// All capture devices
+    /// All capture devices on the device.
     private var allCaptureDevices: [AVCaptureDevice] {
-        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInDualWideCamera, .builtInWideAngleCamera, .builtInDualWideCamera], mediaType: .video, position: .unspecified).devices
+        AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInUltraWideCamera], mediaType: .video, position: .unspecified).devices
+    }
+    private var multiLensDevices: [AVCaptureDevice] {
+        AVCaptureDevice.DiscoverySession(deviceTypes:[.builtInTripleCamera, .builtInDualWideCamera, .builtInDualCamera],  mediaType: .video, position: .unspecified).devices
     }
     
     /// Front capture devices
@@ -56,9 +59,15 @@ final class CameraService: NSObject {
         }
     }
     
+    private var focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
+    
     /// Tracks whether the capture session is running
     var isRunning: Bool {
         captureSession.isRunning
+    }
+    
+    var supportsManualFocus: Bool {
+        captureDevice?.isLockingFocusWithCustomLensPositionSupported ?? false
     }
     
     /// Tracks whether the current capture device is a front device.
@@ -80,6 +89,7 @@ final class CameraService: NSObject {
     
     /// Tracks whether the preview is on or paused.
     var isPreviewPaused = false
+    
     
     /// The stream of frames from the capture device, loaded asynchronously and returned as`CIImage`.
     lazy var previewStream: AsyncStream<CIImage> = {
@@ -107,14 +117,98 @@ final class CameraService: NSObject {
     /// Initializes the capture device to the wide angle rear camera.
     override init() {
         super.init()
-        captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera,
-                                                for: .video,
-                                                position: .back)
+        captureDevice = rearCaptureDevices.first
     }
     
+    
+    typealias Lens = (label: String, zoomFactor: CGFloat)
+    private var lenses = [Lens]()
+    
+    private(set) var currentLens = CurrentValueSubject<Lens?, Never>(nil)
+    
+    func updateLensOptions() {
+        if let zoomFactors = multiLensDevices.first?.virtualDeviceSwitchOverVideoZoomFactors {
+            if zoomFactors.isEmpty {
+                lenses = [(label: "1", zoomFactor: 1)]
+            } else {
+                if captureDevice?.deviceType == .builtInDualCamera {
+                    lenses = [(label: "1", zoomFactor: 1)]
+                    let otherLenses = zoomFactors
+                        .map { factor in
+                            (label: "2", zoomFactor: CGFloat(factor.floatValue))
+                        }
+                    lenses.append(contentsOf: otherLenses)
+                    
+                } else {
+                    lenses = [(label: "0.5", zoomFactor: 1)]
+                    let otherLenses = zoomFactors
+                        .map { factor in
+                            (label: "\(factor.intValue/2)", zoomFactor: CGFloat(factor.floatValue))
+                        }
+                    lenses.append(contentsOf: otherLenses)
+                }
+            }
+        }
+    }
 }
 
 extension CameraService {
+    /// Flips between front and rear cameras.
+    func flipCaptureDevice() {
+        if let captureDevice = captureDevice {
+            if rearCaptureDevices.contains(captureDevice) {
+                self.captureDevice = frontCaptureDevices.first
+            } else {
+                self.captureDevice = rearCaptureDevices.first
+            }
+        }
+    }
+    
+    /// Switches between the available rear cameras.
+    func switchRearCaptureDevice() {
+        if let device = captureDevice,
+           let deviceIndex = rearCaptureDevices.firstIndex(of: device),
+           let lensIndex = lenses.firstIndex(where: { $0.label == currentLens.value?.label} ) {
+            let nextDeviceIndex = (deviceIndex + 1) % rearCaptureDevices.count
+            let nextLensIndex = (lensIndex + 1) % lenses.count
+            self.captureDevice = rearCaptureDevices[nextDeviceIndex]
+            currentLens.send(lenses[nextLensIndex])
+        } else {
+            self.captureDevice = rearCaptureDevices.first
+        }
+    }
+    
+    /// Sets the focus mode for the current device.
+    /// Manual focus is only set for devices that support it.
+    /// - Parameter mode: The focus mode to set the capture device to.
+    func switchFocusMode(to mode: AVCaptureDevice.FocusMode) {
+        // Make sure the focus mode is supported on the capture device.
+        guard captureDevice?.isFocusModeSupported(mode) == true
+        else { return }
+        
+        // lockForConfiguration is REQUIRED for exclusive access to the capture device's
+        // configuration properties.
+        try? captureDevice?.lockForConfiguration()
+        
+        // Set the capture device's focus mode to the passed in mode.
+        captureDevice?.focusMode = mode
+        
+        // After performing changes, release the lock on the device's settings.
+        captureDevice?.unlockForConfiguration()
+        
+    }
+    
+    /// Sets the lens position for manual focus if supported on the capture device.
+    /// - Parameter position: The lens position to lock focus on.
+    func setManualFocus(to position: Float) {
+        // Make sure the capture device supports locked focus or exit.
+        guard captureDevice?.isFocusModeSupported(.locked) == true
+        else { return }
+        try? captureDevice?.lockForConfiguration()
+        captureDevice?.setFocusModeLocked(lensPosition: position)
+        captureDevice?.unlockForConfiguration()
+        
+    }
     
     /// Configures the capture session, adding inputs and outputs for photos and video.
     func configureCaptureSession() throws {
@@ -127,7 +221,7 @@ extension CameraService {
             captureSession.commitConfiguration()
         }
         
-        // Check for a capture device
+        // Check for the capture device
         guard let captureDevice = captureDevice
         else { return }
         
@@ -162,12 +256,14 @@ extension CameraService {
         self.photoOutput = photoOutput
         self.videoOutput = videoOutput
         
-        photoOutput.isHighResolutionCaptureEnabled = true
         photoOutput.maxPhotoQualityPrioritization = .quality
         
         // Update the video output connection to mirror output if using front camera.
         updateVideoOutputConnection()
+        updateLensOptions()
         
+        let lensToUse = lenses.first(where: { $0.label == "1"} )!
+        currentLens.send(lensToUse)
         isCaptureSessionConfigured = true
         
         // Deferred block runs here.
@@ -235,7 +331,7 @@ extension CameraService {
     }
     
     /// Captures a photo
-    func capturePhoto() {
+    func capturePhoto(flashMode: AVCaptureDevice.FlashMode) {
         sessionQueue.async { [ weak self] in
             guard let self  else { return }
             
@@ -249,9 +345,7 @@ extension CameraService {
             
             // Check for flash functionality
             let isFlashAvailable = self.deviceInput?.device.isFlashAvailable ?? false
-            photoSettings.flashMode = isFlashAvailable ? .auto : .off
-            
-            photoSettings.isHighResolutionPhotoEnabled = true
+            photoSettings.flashMode = isFlashAvailable ? flashMode : .off
             
             // Set the pixel format
             if let previewPhotoPixelFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
@@ -276,34 +370,48 @@ extension CameraService {
     
     /// Starts the capture session.
     func start() async {
+        // Check for authorization.
         let authorized = await isAuthorized()
         guard authorized else {
             return
         }
         
+        // Check if the session has already been configured and is not running.
+        // In which case start running the session.
         if isCaptureSessionConfigured {
             if !captureSession.isRunning {
+                
+                // On the session's dispatch queue, start running the session.
                 sessionQueue.async { [self] in
                     self.captureSession.startRunning()
                 }
             }
+            // Exit
             return
         }
         
+        // If we are here, the session was not configured.
         sessionQueue.async { [self] in
             do {
+                // Configure the capture session
                 try self.configureCaptureSession()
+                
+                // Start runnig the session.
                 self.captureSession.startRunning()
             } catch {
                 
+                // Handle the error if configuring fails.
+                print(error.localizedDescription)
             }
         }
     }
     
     /// Ends the capture session.
     func stop() {
+        // Make sure the session was configured or exit if not.
         guard isCaptureSessionConfigured else { return }
         
+        // Stop the session if it is running.
         if captureSession.isRunning {
             sessionQueue.async {
                 self.captureSession.stopRunning()
@@ -335,12 +443,12 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
     
     /// Delegate method to handle photo capture.
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        
         if let error = error {
             print("Error capturing photo: \(error.localizedDescription)")
             return
         }
-        // Send captured photo to the photo stream
+        
+        // Send captured photo to the photo stream.
         addToPhotoStream?(photo)
     }
 }

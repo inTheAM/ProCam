@@ -19,6 +19,7 @@ struct CameraControlsGrid: View {
     @Environment(\.scenePhase) var scenePhase
     
     @EnvironmentObject var hapticFeedback: HapticFeedback
+    @EnvironmentObject var camera: Camera
     
     @State private var isShowingTimerSettings = false
     
@@ -159,11 +160,11 @@ extension CameraControlsGrid {
     /// A button that toggles the flash.
     var flashlightButton: some View {
         Button {
-            #warning("Toggle flashlight")
+            camera.toggleFlashMode()
         } label: {
-            Image(systemName: "bolt.slash.fill")
+            Image(systemName: camera.flashMode == .on ? "bolt.fill" : "bolt.slash.fill")
                 .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundColor(camera.flashMode == .on ? .yellow : .white)
         }
         .accessibilityLabel("Turn on flashlight.")
     }
@@ -171,15 +172,15 @@ extension CameraControlsGrid {
     /// A button that toggles the visibility of the grid overlay on the camera preview.
     var gridOverlayButton: some View {
         Button {
-            #warning("Toggle grid visibility")
+            camera.toggleGrid()
         } label: {
             Image(systemName: "grid")
                 .font(.system(size: 20, weight: .ultraLight, design: .monospaced))
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor((camera.isShowingGrid ? Color.yellow : .white).opacity(0.4))
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
-                        .foregroundColor(.white)
+                        .foregroundColor(camera.isShowingGrid ? .yellow : .white)
                 }
         }
         .accessibilityLabel("Show overlay grid.")
@@ -188,7 +189,7 @@ extension CameraControlsGrid {
     /// A button that switches between the front and rear cameras.
     var switchFrontRearCameraButton: some View {
         Button {
-            #warning("Switch between front and rear cameras")
+            camera.flipCamera()
         } label: {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 20, weight: .light, design: .monospaced))

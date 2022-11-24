@@ -10,9 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Namespace private var namespace
     @StateObject private var camera = Camera()
-    @State private var isInManualfocus = false
+    @StateObject private var hapticFeedback = HapticFeedback.shared
     @State private var isShowingAutoManualSelection = false
-    @State private var focusAmount = 0.0
     var body: some View {
         VStack(spacing: 0) {
             // The histogram view and button to toggle between auto/manual modes.
@@ -29,9 +28,14 @@ struct ContentView: View {
             // with the controls overlaid in a `ZStack`.
             ZStack(alignment: .bottom) {
                 VStack {
-                    CameraPreview()
+                    cameraPreview
                         .overlay {
                             balanceIndicator
+                        }
+                        .overlay {
+                            if camera.isShowingGrid {
+                                grid
+                            }
                         }
                         .overlay(alignment: .trailing) {
                             if isShowingAutoManualSelection {
@@ -62,7 +66,7 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     CameraControlsGrid()
-                        .padding(.bottom, isInManualfocus ? 232 : 208)
+                        .padding(.bottom, camera.isInManualfocus ? 232 : 208)
                 }
                 
                 VStack(spacing: 0) {
@@ -70,8 +74,7 @@ struct ContentView: View {
                     Divider()
                     
                     VStack {
-                        if isInManualfocus {
-                            
+                        if camera.isInManualfocus {
                             ZStack(alignment: .bottom) {
                                 VStack {
                                     HStack {
@@ -84,9 +87,6 @@ struct ContentView: View {
                                         focusLoupeButton
                                     }
                                     HStack {
-                                        Spacer()
-                                    }
-                                    HStack {
                                         macroModeButton
                                         Spacer()
                                         autoManualFocusButton
@@ -96,7 +96,7 @@ struct ContentView: View {
                                 .padding(.bottom, 10)
                                 .zIndex(2)
                                 
-                                SegmentedSlider(value: $focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
+                                SegmentedSlider(value: $camera.focusAmount, lowerBound: 0, upperBound: 1, strideLength: 0.02)
                                     .zIndex(1)
                                 
                             }
@@ -109,10 +109,11 @@ struct ContentView: View {
                             
                             // The Autofocus button and Portrait mode button
                             HStack {
-                                
-                                autoManualFocusButton
-                                    .matchedGeometryEffect(id: "automanualfocus", in: namespace)
-                                
+                                if camera.supportsManualFocus {
+                                    autoManualFocusButton
+                                        .transition(.scale)
+                                        .matchedGeometryEffect(id: "automanualfocus", in: namespace)
+                                }
                                 Spacer(minLength: 0)
                                 
                                 portraitModeButton
@@ -141,10 +142,11 @@ struct ContentView: View {
                     }
                 }
             }
-            .animation(.default, value: isInManualfocus)
+            .animation(.default, value: camera.isInManualfocus)
         }
         .ignoresSafeArea()
         .environmentObject(camera)
+        .environmentObject(hapticFeedback)
         .task {
             await camera.start()
         }
@@ -152,19 +154,42 @@ struct ContentView: View {
 }
 
 extension ContentView {
-#warning("Show camera preview")
+    
     /// The preview of what the camera sees.
-    struct CameraPreview: View {
-        @EnvironmentObject var camera: Camera
-        var body: some View {
-            if let image = camera.preview {
-                image
-                    .scaledToFit()
-                    .accessibilityLabel("Camera preview.")
-            } else {
+    @ViewBuilder var cameraPreview: some View {
+        if let image = camera.preview {
+            image
+                .scaledToFit()
+                .accessibilityLabel("Camera preview.")
+        } else {
+            Rectangle()
+                .foregroundColor(.cyan.opacity(0.2))
+        }
+    }
+    
+    var grid: some View {
+        ZStack {
+            HStack {
+                Spacer()
                 Rectangle()
-                    .foregroundColor(.cyan.opacity(0.2))
+                    .frame(width: 1)
+                Spacer()
+                Rectangle()
+                    .frame(width: 1)
+                Spacer()
             }
+            .opacity(0.5)
+            
+            VStack {
+                Spacer()
+                Rectangle()
+                    .frame(height: 1)
+                Spacer()
+                Rectangle()
+                    .frame(height: 1)
+                Spacer()
+            }
+            .opacity(0.5)
         }
     }
     
@@ -272,15 +297,14 @@ extension ContentView {
     /// The button to toggle between autofocus and manual focus.
     var autoManualFocusButton: some View {
         Button {
-            #warning("Toggle Auto/Manual Focus")
-            isInManualfocus.toggle()
+            camera.toggleFocusMode()
         } label: {
             Text("AF")
                 .font(.system(size: 14, weight: .light, design: .rounded))
                 .padding(8)
-                .foregroundColor(isInManualfocus ? .white : .yellow)
+                .foregroundColor(camera.isInManualfocus ? .white : .yellow)
                 .background {
-                    CircleBackground(color: isInManualfocus ? .gray : .yellow)
+                    CircleBackground(color: camera.isInManualfocus ? .gray : .yellow)
                 }
         }
         .padding([.horizontal])
@@ -357,22 +381,29 @@ extension ContentView {
         .accessibilityLabel("Activate portrait mode.")
     }
     
-#warning("Show last image in library")
     /// The preview of the last image in the user's photo library.
     var lastImageInLibrary: some View {
-        Rectangle()
-            .aspectRatio(contentMode: .fit)
-            .cornerRadius(8)
-            .frame(width: 96, height: 96)
-            .padding(.horizontal, 8)
-            .accessibilityLabel("Show last photo taken.")
+        Group {
+            if let thumbnail = camera.thumbnailImage {
+                thumbnail
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Spacer()
+            }
+        }
+        .frame(width: 96, height: 96)
+        .clipped()
+        .cornerRadius(8)
+        .padding(.horizontal, 8)
+        .accessibilityLabel("Show last photo taken.")
     }
     
     /// The button to capture the photo.
     var capturePhotoButton: some View {
         Button {
-            #warning("Capture photo")
             camera.capture()
+            hapticFeedback.playTick(isEmphasized: true)
         } label: {
             LinearGradient(colors: [.gray.opacity(0.7), .white], startPoint: .top, endPoint: .bottom)
                 .clipShape(Circle())
@@ -394,9 +425,9 @@ extension ContentView {
     /// The button to switch between the different rear cameras.
     var switchBetweenRearCamerasButton: some View {
         Button {
-            #warning("Switch between rear cameras")
+            camera.switchRearCamera()
         } label: {
-            Text("1x")
+            Text(camera.currentLens)
                 .padding(10)
                 .background {
                     Circle().stroke(lineWidth: 2)
