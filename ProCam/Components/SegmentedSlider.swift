@@ -42,7 +42,7 @@ struct SegmentedSlider: View {
                             }
                             RoundedRectangle(cornerRadius: 2)
                                 .frame(width: 1, height: 12)
-                                .foregroundColor(isSignificant(index: index) ? .gray : .gray.opacity(0.6))
+                                .foregroundColor(isSignificant(index: index) ? .white : .white.opacity(0.6))
                             
                         }
                         .frame(width: 3)
